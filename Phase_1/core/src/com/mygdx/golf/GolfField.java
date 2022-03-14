@@ -1,3 +1,10 @@
+package com.mygdx.golf;
+
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+
 public class GolfField {
 
     //size of field
@@ -18,11 +25,12 @@ public class GolfField {
 
     GolfField(GolfBall ball){
         this.ball = ball;
+        input = new double[12];
 
     }
 
     //method responsible for reading the input.txt file when the ball is created
-    public void readFile(){
+    public void readFile() throws IOException {
         BufferedReader read = new BufferedReader(new FileReader("input.txt"));
         for (int i = 0; i < input.length; i++) {
             String s = read.readLine();
