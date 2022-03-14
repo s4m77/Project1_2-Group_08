@@ -1,3 +1,5 @@
+package com.mygdx.golf;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.nio.Buffer;
@@ -11,8 +13,8 @@ public class GolfBall {
         this. x = x; this.y = y;
         //radius = 2.13;
         speed = 0;
-        input = new double[12];
-        readFile();
+
+
     }
     //set speed aof ball
     public void setSpeed(double speed){
