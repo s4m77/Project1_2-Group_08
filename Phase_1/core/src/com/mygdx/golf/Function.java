@@ -5,12 +5,18 @@ package com.mygdx.golf;
 abstract class Function {
     
     public abstract Function derivate(String v);
+
     public Function multiply(Function f2){
         return new Multiplication(this, f2);
     }
     public Function add(Function f2){
         return new Addition(this, f2);
-    } 
+    }
+    public Function division(Function f2){
+        return new Division(this, f2);
+    }
+
+    public abstract Double getNumericalValue(Double value, String v);
 }
 /**
  * Representation of a Variable
@@ -19,12 +25,18 @@ class Variable extends Function{
     private String var;
     public Variable(String var) {this.var = var;}
 
+    public String getVar() {return this.var;}
+
     @Override
     public Function derivate(String v){
         if (var.equals(v)) return new Number(1);
         return new Number(0);
     }
     public String toString() { return this.var; }  
+
+    public Double getNumericalValue(Double value, String v){
+        return v.equals(var) ? value : 0;
+    }
 }
 /**
  * Representation of a numerical value
@@ -33,12 +45,87 @@ class Number extends Function{
     private double n;
     public Number(double n) {this.n = n;}
 
+    public double getValue() {return this.n;}
+
     @Override
     public Function derivate(String v) {
         return new Number(0);
     }
     public String toString() {return Double.toString(this.n);}
 
+    public Double getNumericalValue(Double value, String v){
+        return (Double) this.n;
+    }
+
+}
+/**
+ * Class for handeling Logarithms 
+ */
+class Logarithm extends Function{
+
+    private double base; private Function argument;
+
+    Logarithm(double e, Function argument) {this.base = e; this.argument = argument;}
+
+    public double evaluateLog(double base, double argument) {return Math.log(argument)/Math.log(base);}
+    
+    @Override
+    public Function derivate(String v) {
+        return new Division(argument.derivate(v), new Multiplication(new Number(evaluateLog(Math.E, this.base)), this.argument));
+    }
+    public String toString() {return "Log(" + base + ", " + argument + ")";}
+
+    @Override
+    public Double getNumericalValue(Double value, String v) {
+
+        return evaluateLog(this.base, argument.getNumericalValue(value, v));
+    }
+}
+/**
+ * Class to represent Exponentials
+ */
+class Exponential extends Function{
+
+    private Function f;
+    public Exponential(Function f) {this.f = f;}
+    
+    @Override
+    public Function derivate(String v) {return new Multiplication(new Exponential(f), f.derivate(v));}
+
+    public String toString() {return "exp(" + f + ")";}
+
+    @Override
+    public Double getNumericalValue(Double value, String v) {
+        return Math.exp(f.getNumericalValue(value, v));
+    }
+}
+/**
+ * Class to represent Trigs
+ */
+class Trigonometric extends Function{
+
+    private String trig; private Function f;
+
+    public Trigonometric(String trig, Function f) {this.trig = trig; this.f = f;}    
+    
+    @Override
+    public Function derivate(String v) {
+
+        if(this.trig.equals("sine"))
+            return new Multiplication(new Trigonometric("cosine", f), f.derivate(v));
+        else
+            return new Multiplication(new Number(-1), new Multiplication(new Trigonometric("sine", f), f.derivate(v))); //add -
+    }
+    public String toString() {return this.trig + "(" + f + ")";}
+
+    @Override
+    public Double getNumericalValue(Double value, String v) {
+    
+        if (this.trig.equals("sine"))
+            return Math.sin(f.getNumericalValue(value, v));
+        else
+            return Math.cos(f.getNumericalValue(value, v));
+    }
 }
 /**
  * Class for handeling addition
@@ -54,6 +141,11 @@ class Addition extends Function{
     }
     public String toString() {return "[ " + f1.toString() + " + " + f2.toString() + " ]";}
 
+    @Override
+    public Double getNumericalValue(Double value, String v) {
+        
+        return f1.getNumericalValue(value, v) + f2.getNumericalValue(value, v);
+    }
     
 }
 /**
@@ -71,14 +163,42 @@ class Multiplication extends Function{
     }
     public String toString() {return "[ " + f1.toString() + " * " + f2.toString() + " ]";}
 
+    @Override
+    public Double getNumericalValue(Double value, String v) {
+        
+        return f1.getNumericalValue(value, v)*f2.getNumericalValue(value, v);
+    }
+
+}
+/**
+ * Class for handeling divisions
+ */
+class Division extends Function{
+    
+    private Function f1, f2;
+    public Division(Function f1, Function f2) {this.f1 = f1; this.f2 = f2;}
+
+    @Override
+    public Function derivate(String v) {
+        return new Division(new Addition(new Multiplication(f1.derivate(v), f2), new Multiplication(f1, f2.derivate(v))), 
+                            new Multiplication(f2, f2));
+    }
+    public String toString() {return "[ " + f1.toString() + " + " + f2.toString() + " ]";}
+
     public static void main(String[] args) {
-        Function x = new Variable("x"), a = new Number(-2),
-                 y = new Variable("y"), b = new Number(-1);
-        Function f = a.multiply(x).multiply(x).add(b.multiply(y));
-        System.out.println(f.toString());
-        Function f1 = f.derivate("x");
-        Function f2 = f.derivate("y");
-        System.err.println(f1.toString());
-        System.err.println(f2.toString());
-    }   
+        Function x = new Variable("x"), a = new Number(2), y = new Variable("y"), b = new Number(3);
+
+        Function f = a.multiply(x).add(y.multiply(b));
+        System.err.println(f);
+        Function f1 = f.derivate("x"), f2 = f.derivate("y");
+        System.err.println(f1);
+        System.err.println(f2);
+    }
+
+    @Override
+    public Double getNumericalValue(Double value, String v) {
+        
+        return f1.getNumericalValue(value, v)/f2.getNumericalValue(value, v);
+    }
+    
 }
