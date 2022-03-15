@@ -2,5 +2,6 @@
     "java.project.sourcePaths": [
         "Golf/src",
         "Phase_1/desktop/src/com/mygdx/golf"
-    ]
+    ],
+    "java.configuration.updateBuildConfiguration": "interactive"
 }
