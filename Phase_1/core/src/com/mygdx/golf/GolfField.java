@@ -18,14 +18,14 @@ public class GolfField {
     * stores, in order: [0]:x0, [1]:y0, [2]:xt, [3]:yt, [4]:r, [5]:muk, [6]:mus
     * [7]:heightProfile, [8]:sandPitX, [9]:sandPitY, [10]:muks, [11]:muss
     */
-    double[] input;
+    String[] input;
     double flagRadius;
 
     GolfBall ball;
 
     GolfField(GolfBall ball){
         this.ball = ball;
-        input = new double[12];
+        input = new String[12];
         try {
             readFile();
         } catch (IOException e) {
@@ -34,6 +34,8 @@ public class GolfField {
         this.flagRadius = input[4];
 
     }
+
+    public String getFunction() {return input[11];}
 
     //method responsible for reading the input.txt file when the ball is created
     public void readFile() throws IOException {
