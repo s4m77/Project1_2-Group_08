@@ -38,5 +38,34 @@ public class GolfField {
         }
         read.close();
     }
+
+    public static double function(double x, double y){
+        return x+2*y;
+    } 
+
+    public static double euler(double h, double x0, double y0, double X){
+        
+        boolean check = true;
+        double root = 0;
+        double Y = 0.0;
+
+        while(check){
+            //euler formula
+            Y = y0 + h * function(x0, y0);
+            //step increment
+            root = x0+h;
+            //stopping condition
+            if (root >= X) check = false;
+            //update for next cycle
+            x0 = root;
+            y0 = Y;
+        }
+        return Y;
+    }
+    public static void main(String[] args) {
+        double y0 = 0, x0 = 0, X = 1, finalY = 2.60143, finalX = 1;
+        double sol = euler(0.25, x0, y0, X);
+        System.out.println(sol);
+    }
     
 }
