@@ -69,5 +69,16 @@ class Multiplication extends Function{
         
         return new Addition(new Multiplication(f1.derivate(v), f2), new Multiplication(f1, f2.derivate(v)));
     }
-    public String toString() {return "[ " + f1.toString() + " + " + f2.toString() + " ]";}
+    public String toString() {return "[ " + f1.toString() + " * " + f2.toString() + " ]";}
+
+    public static void main(String[] args) {
+        Function x = new Variable("x"), a = new Number(-2),
+                 y = new Variable("y"), b = new Number(-1);
+        Function f = a.multiply(x).multiply(x).add(b.multiply(y));
+        System.out.println(f.toString());
+        Function f1 = f.derivate("x");
+        Function f2 = f.derivate("y");
+        System.err.println(f1.toString());
+        System.err.println(f2.toString());
+    }   
 }
