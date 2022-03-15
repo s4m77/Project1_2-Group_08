@@ -29,8 +29,8 @@ class Variable extends Function{
 
     @Override
     public Function derivate(String v){
-        if (var.equals(v)) return new Number(1);
-        return new Number(0);
+        if (var.equals(v)) return new Number("1");
+        return new Number("0");
     }
     public String toString() { return this.var; }  
 
@@ -42,19 +42,19 @@ class Variable extends Function{
  * Representation of a numerical value
  */
 class Number extends Function{
-    private double n;
-    public Number(double n) {this.n = n;}
+    private String n;
+    public Number(String n) {this.n = n;}
 
-    public double getValue() {return this.n;}
+    public double getValue() {return Double.parseDouble(this.n);}
 
     @Override
     public Function derivate(String v) {
-        return new Number(0);
+        return new Number("0");
     }
-    public String toString() {return Double.toString(this.n);}
+    public String toString() {return this.n;}
 
     public Double getNumericalValue(Double value, String v){
-        return (Double) this.n;
+        return Double.parseDouble(this.n);
     }
 
 }
@@ -67,11 +67,12 @@ class Logarithm extends Function{
 
     Logarithm(double e, Function argument) {this.base = e; this.argument = argument;}
 
-    public double evaluateLog(double base, double argument) {return Math.log(argument)/Math.log(base);}
+    public Double evaluateLog(double base, double argument) {return Math.log(argument)/Math.log(base);}
     
     @Override
     public Function derivate(String v) {
-        return new Division(argument.derivate(v), new Multiplication(new Number(evaluateLog(Math.E, this.base)), this.argument));
+    
+        return new Division(argument.derivate(v), new Multiplication(new Number(evaluateLog(Math.E, this.base).toString()), this.argument));
     }
     public String toString() {return "Log(" + base + ", " + argument + ")";}
 
@@ -114,7 +115,7 @@ class Trigonometric extends Function{
         if(this.trig.equals("sine"))
             return new Multiplication(new Trigonometric("cosine", f), f.derivate(v));
         else
-            return new Multiplication(new Number(-1), new Multiplication(new Trigonometric("sine", f), f.derivate(v))); //add -
+            return new Multiplication(new Number("-1"), new Multiplication(new Trigonometric("sine", f), f.derivate(v)));
     }
     public String toString() {return this.trig + "(" + f + ")";}
 
@@ -185,20 +186,23 @@ class Division extends Function{
     }
     public String toString() {return "[ " + f1.toString() + " + " + f2.toString() + " ]";}
 
-    public static void main(String[] args) {
-        Function x = new Variable("x"), a = new Number(2), y = new Variable("y"), b = new Number(3);
-
-        Function f = a.multiply(x).add(y.multiply(b));
-        System.err.println(f);
-        Function f1 = f.derivate("x"), f2 = f.derivate("y");
-        System.err.println(f1);
-        System.err.println(f2);
-    }
-
     @Override
     public Double getNumericalValue(Double value, String v) {
         
         return f1.getNumericalValue(value, v)/f2.getNumericalValue(value, v);
     }
     
+    public static void main(String[] args) {
+        Function x = new Variable("x"), y = new Variable("y"), a = new Number("-2"), b = new Number("3");
+
+        Function f = x.multiply(a).add(y.multiply(b));
+        System.out.println("Starting function: " + f);
+        Function fx = f.derivate("x"), fy = f.derivate("y");
+        System.out.println("d/dx = " + fx + "d/dy = " + fy);
+
+        Double xTest = f.getNumericalValue(3.0, "x"), yTest = f.getNumericalValue(2.0, "y");
+        System.out.println(xTest + " - " + yTest);
+
+        
+    }
 }
