@@ -30,8 +30,8 @@ public class Engine{
 
     public void calcPartialDerivative(double z){
         //implement here calculation of partial derivative according to courseprofile
-        this.partialX= 0.5; //example
-        this.partialY= 0; //example
+        this.partialX= 0.2; //example
+        this.partialY= 0.1; //example
     }
 
     public void calcAcceleration(){
@@ -85,7 +85,7 @@ public class Engine{
             }
             else{
                 //ball slides
-                while((previousVx>0 || previousVy>0)) /*Ms<= Math.sqrt(partialX*partialX + partialY*partialY)*/{
+                while(Ms<= Math.sqrt(partialX*partialX + partialY*partialY)) /*Ms<= Math.sqrt(partialX*partialX + partialY*partialY)*/{
                     if(previousx< 0 || previousy<0){
                         return;
                     }
