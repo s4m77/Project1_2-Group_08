@@ -19,12 +19,19 @@ public class GolfField {
     * [7]:heightProfile, [8]:sandPitX, [9]:sandPitY, [10]:muks, [11]:muss
     */
     double[] input;
+    double flagRadius;
 
     GolfBall ball;
 
     GolfField(GolfBall ball){
         this.ball = ball;
         input = new double[12];
+        try {
+            readFile();
+        } catch (IOException e) {
+            System.out.println("There was an error reading the file");
+        }
+        this.flagRadius = input[4];
 
     }
 
