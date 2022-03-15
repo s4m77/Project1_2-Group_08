@@ -1,5 +1,7 @@
 package com.mygdx.golf;
-
+/**
+ * This class is used to represent a Function
+ */
 abstract class Function {
     
     public abstract Function derivate(String v);
@@ -8,9 +10,11 @@ abstract class Function {
     }
     public Function add(Function f2){
         return new Addition(this, f2);
-    }
-    
+    } 
 }
+/**
+ * Representation of a Variable
+ */
 class Variable extends Function{
     private String var;
     public Variable(String var) {this.var = var;}
@@ -22,9 +26,12 @@ class Variable extends Function{
     }
     public String toString() { return this.var; }  
 }
+/**
+ * Representation of a numerical value
+ */
 class Number extends Function{
     private double n;
-    public Number(int n) {this.n = n;}
+    public Number(double n) {this.n = n;}
 
     @Override
     public Function derivate(String v) {
@@ -33,6 +40,9 @@ class Number extends Function{
     public String toString() {return Double.toString(this.n);}
 
 }
+/**
+ * Class for handeling addition
+ */
 class Addition extends Function{
 
     private Function f1, f2;
@@ -46,6 +56,9 @@ class Addition extends Function{
 
     
 }
+/**
+ * Class for handeling multiplications 
+ */
 class Multiplication extends Function{
 
     private Function f1, f2;
