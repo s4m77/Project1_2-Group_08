@@ -5,9 +5,11 @@ import org.mariuszgromada.math.mxparser.mathcollection.*;
 
 public class Derivation {
     //READ THIS FROM THE INPUT MODULE
-    public static final Function f = new Function("h(x,y) = 0.5*(sin((x-y)/7)+0.9)");
+    public static Function f = new Function("h(x,y) = 0.5*(sin((x-y)/7)+0.9)");
     
-
+    public static void setFunction(String funcString) {
+        f = new Function(funcString);
+    }
     public static double derivativeX(double x, double y) {
         Argument xArg = new Argument("x", x);
         Argument yArg = new Argument("y", y);

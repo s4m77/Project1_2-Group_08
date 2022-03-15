@@ -24,8 +24,8 @@ class Variable extends Operator{
 
     @Override
     public Operator derivate(String v){
-        if (var.equals(v)) return new Number(1);
-        return new Number(0);
+        if (var.equals(v)) return new Number("1");
+        return new Number("0");
     }
     public String toString() { return this.var; }  
 
@@ -34,8 +34,8 @@ class Variable extends Operator{
     }
 }
 class Number extends Operator{
-    private double n;
-    public Number(int n) {this.n = n;}
+    private String n;
+    public Number(String n) {this.n = n;}
 
     public double getValue() {return Double.parseDouble(this.n);}
 
@@ -103,7 +103,7 @@ class Trigonometric extends Operator{
     
     @Override
     public Operator derivate(String v) {
-        return new Number(0);
+        return new Number("0");
     }
     public String toString() {return this.trig + "(" + f + ")";}
 
