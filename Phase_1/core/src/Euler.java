@@ -30,8 +30,13 @@ public class Euler{
 
     public void calcPartialDerivative(double z){
         //implement here calculation of partial derivative according to courseprofile
-        this.partialX= 0.2; //example
-        this.partialY= 0; //example
+        //so derivativecalculator will return the partial derivative of a function
+        //if this is a number we can immediately use it
+        //if this is another function (including either x or y) we can fill in currentx or currenty, to
+        //finally get the result
+        //calcPartialDerivative needs to be called again every time there is a new x or y position
+        this.partialX= 0.1; //example
+        this.partialY= 0.1; //example
     }
 
     public void calcAcceleration(){
@@ -85,7 +90,7 @@ public class Euler{
             }
             else{
                 //ball slides
-                while(Ms<= Math.sqrt(partialX*partialX + partialY*partialY)) /*Ms<= Math.sqrt(partialX*partialX + partialY*partialY)*/{
+                while(Ms<= Math.sqrt(partialX*partialX + partialY*partialY)){
                     if(previousx< 0 || previousy<0){
                         return;
                     }
@@ -151,7 +156,7 @@ public class Euler{
     }*/
 
     public static void main(String[] args) {
-        Euler eul= new Euler(2, 0, 0, 1);
+        Euler eul= new Euler(0, 0, 1, 1);
         eul.giveSolution();
         //eng.giveSolution();
 
