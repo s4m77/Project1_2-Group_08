@@ -67,7 +67,7 @@ class Multiplication extends Function{
     @Override
     public Function derivate(String v) {
         
-        return new Addition(new Multiplication(f1, f2.derivate(v)), new Multiplication(f1, f2.derivate(v)));
+        return new Addition(new Multiplication(f1.derivate(v), f2), new Multiplication(f1, f2.derivate(v)));
     }
     public String toString() {return "[ " + f1.toString() + " + " + f2.toString() + " ]";}
 }
