@@ -1,4 +1,4 @@
-public class Engine{
+public class Euler{
     
     //positions
     private double previousx, previousy, currentx, currenty;
@@ -19,7 +19,7 @@ public class Engine{
     static double Mk= 0.1; 
     static double Ms= 0.2;
 
-    public Engine(double initialX, double initialY, double initialVx, double initialVy){
+    public Euler(double initialX, double initialY, double initialVx, double initialVy){
         this.previousx= initialX;
         this.previousy= initialY;
         this.previousVx= initialVx; //get input from inputfile with initial v's
@@ -30,8 +30,13 @@ public class Engine{
 
     public void calcPartialDerivative(double z){
         //implement here calculation of partial derivative according to courseprofile
-        this.partialX= 0.5; //example
-        this.partialY= 0; //example
+        //so derivativecalculator will return the partial derivative of a function
+        //if this is a number we can immediately use it
+        //if this is another function (including either x or y) we can fill in currentx or currenty, to
+        //finally get the result
+        //calcPartialDerivative needs to be called again every time there is a new x or y position
+        this.partialX= 0.1; //example
+        this.partialY= 0.1; //example
     }
 
     public void calcAcceleration(){
@@ -85,7 +90,7 @@ public class Engine{
             }
             else{
                 //ball slides
-                while((previousVx>0 || previousVy>0)) /*Ms<= Math.sqrt(partialX*partialX + partialY*partialY)*/{
+                while(Ms<= Math.sqrt(partialX*partialX + partialY*partialY)){
                     if(previousx< 0 || previousy<0){
                         return;
                     }
@@ -151,8 +156,8 @@ public class Engine{
     }*/
 
     public static void main(String[] args) {
-        Engine eng= new Engine(0, 0, 1, 1);
-        eng.giveSolution();
+        Euler eul= new Euler(0, 0, 1, 1);
+        eul.giveSolution();
         //eng.giveSolution();
 
         /*while(eng.getPreviousVx()>0 || eng.getPreviousVy()>0){
