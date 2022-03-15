@@ -17,6 +17,7 @@ abstract class Function {
     }
 
     public abstract Double getNumericalValue(Double value, String v);
+
 }
 /**
  * Representation of a Variable
@@ -202,7 +203,29 @@ class Division extends Function{
 
         Double xTest = f.getNumericalValue(3.0, "x"), yTest = f.getNumericalValue(2.0, "y");
         System.out.println(xTest + " - " + yTest);
-
         
     }
+}
+/**
+ * Class for handeling powers
+ */
+class Power extends Function{
+
+    Function f1, f2;
+
+    public Power(Function f1, Function f2) {this.f1 = f1; this.f2 = f2;}
+
+    @Override
+    public Function derivate(String v) {
+    
+        return new Multiplication(new Power(f1, f2), new Addition(new Multiplication(f1.derivate(v), new Logarithm(Math.E, f1)), 
+                                  new Division(new Multiplication(f2, f1.derivate(v)), f1)));
+    }
+
+    @Override
+    public Double getNumericalValue(Double value, String v) {
+        
+        return Math.pow(f1.getNumericalValue(value, v), f2.getNumericalValue(value, v));
+    }
+    
 }
