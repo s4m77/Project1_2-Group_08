@@ -26,8 +26,18 @@ public class FileInputManager {
         BufferedReader read = new BufferedReader(new FileReader(file));
         for (int i = 0; i < input.length; i++) {
             String s = read.readLine();
-            
-            input[i] = ;
+            String s1;
+            char[] c = s.toCharArray();
+            for (int j = 0; j < c.length; j++) {
+                
+                Character chr = c[j];
+                if(chr.equals('=')){
+                    StringBuilder build = new StringBuilder(s);
+                    s1 = build.substring(j+1);
+                    input[i] = s1;
+                    break;
+                }
+            }
         }
         read.close();
     }
