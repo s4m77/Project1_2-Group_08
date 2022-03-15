@@ -1,6 +1,7 @@
 package com.mygdx.golf;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.text.ParseException;
@@ -22,8 +23,11 @@ public class FileInputManager {
 
     }
 
-    public void readFile(String file) throws IOException {
-        BufferedReader read = new BufferedReader(new FileReader(file));
+    public String[] getInputArray() {return this.input;}
+
+    public void readFile(String fileName) throws IOException {
+        input = new String[12];
+        BufferedReader read = new BufferedReader(new FileReader(new File("C:\\Users\\samgo\\OneDrive\\Documenti\\GitHub\\Project1_2-Group_08\\Phase_1\\core\\src\\com\\mygdx\\golf\\input.txt")));
         for (int i = 0; i < input.length; i++) {
             String s = read.readLine();
             String s1;
@@ -59,4 +63,12 @@ public class FileInputManager {
     public double sandKinetic()      {return Double.parseDouble(input[10]);}
     public double sandStatic()       {return Double.parseDouble(input[11]);}
 
+    public static void main(String[] args) {
+        FileInputManager f = new FileInputManager("input.txt");
+        String[] toPrint = f.getInputArray();
+        for (int i = 0; i < toPrint.length; i++) {
+            System.out.println(toPrint[i]);
+        }
+
+    }
 }
