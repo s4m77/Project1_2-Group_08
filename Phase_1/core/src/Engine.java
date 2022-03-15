@@ -141,7 +141,7 @@ public class Engine{
     }
 
     public double getCurrentVy(){
-        return currentVy;
+        return currentVy;;s
     }*/
 
     public static void main(String[] args) {
