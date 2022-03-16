@@ -12,6 +12,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
+import com.mygdx.golf.engine.Engine;
 
 public class MapScreen extends ScreenAdapter implements InputProcessor {
 
@@ -22,14 +23,16 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
     private float metreToPixelCoeff = 0.01f;
 
     private final float BALLWIDTH = 0.1f;
+    private Engine engine;
 
     // game objects
-    public MapScreen(OrthographicCamera camera) {
+    public MapScreen(OrthographicCamera camera, Engine engine) {
         this.camera = camera;
         this.camera.position
                 .set(new Vector3(Boot.INSTANCE.getScreenWidth() / 2, Boot.INSTANCE.getScreenHeight() / 2, 0));
         this.shapeRenderer = new ShapeRenderer();
         this.batch = new SpriteBatch();
+        this.engine = engine;
 
     }
 
@@ -51,28 +54,30 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-
-        for (float i = 0; i <= Boot.INSTANCE.getScreenWidth(); i += 1) {
-            for (float j = 0; j <= Boot.INSTANCE.getScreenHeight(); j += 1) {
+        
+        int p = 10;
+        for (float i = 0; i <= Boot.INSTANCE.getScreenWidth(); i += p) {
+            for (float j = 0; j <= Boot.INSTANCE.getScreenHeight(); j += p) {
 
                 float x = pixelsToMetres(i, true);
                 float y = pixelsToMetres(j, false);
-                float n = (float) (Math.sin(x + y) / 6 +0.5 );
-                // if(n < 0) {
-                //     shapeRenderer.setColor(0,0 , n*2 +10, 1);
-                // }else {
+                // float n = (float) (Math.sin(x + y) / 6 +0.5 );
+                float n = engine.calculateHeight(x, y);
+                // System.out.println("n " + n);
+                // System.out.println("n1 " + n1);
+                shapeRenderer.setColor(0,1-n , 0, 1);
 
-                    shapeRenderer.setColor(0,1- n , 0, 1);
-                // }
-
-                shapeRenderer.rect(i, j, 1, 1);
+                shapeRenderer.rect(i , j, p, p);
 
             }
         }
         shapeRenderer.setColor(255, 255, 255, 1);
-        shapeRenderer.circle(metresToPixels((float) State.getxPosStatic(), true),
-                metresToPixels((float) State.getyPosStatic(), false), 
+        
+        shapeRenderer.circle(metresToPixels((float) State.getPosition().x, true),
+                metresToPixels((float) State.getPosition().y, false), 
                 BALLWIDTH/metreToPixelCoeff);
+
+        engine.update();
 
         shapeRenderer.end();
     }

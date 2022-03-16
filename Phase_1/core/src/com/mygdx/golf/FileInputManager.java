@@ -21,7 +21,7 @@ public class FileInputManager {
      */
     String[] input;
     public FileInputManager(String fileName){
-        this.path = FileInputManager.class.getResource("input.txt");
+        this.path = FileInputManager.class.getResource(fileName);
         this.fileName = fileName;
         try {readFile(fileName);} 
         catch (IOException e) {e.printStackTrace();}
