@@ -26,7 +26,7 @@ public class FileInputManager {
     public String[] getInputArray() {return this.input;}
 
     public void readFile(String fileName) throws IOException {
-        input = new String[12];
+        input = new String[12]; 
         BufferedReader read = new BufferedReader(new FileReader(new File("C:\\Users\\samgo\\OneDrive\\Documenti\\GitHub\\Project1_2-Group_08\\Phase_1\\core\\src\\com\\mygdx\\golf\\input.txt")));
         for (int i = 0; i < input.length; i++) {
             String s = read.readLine();
