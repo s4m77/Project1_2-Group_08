@@ -181,7 +181,5 @@ public class Euler{
 
         s.setxPos(this.currentx); s.setyPos(this.currenty); s.setxVel(this.currentVx); s.setyVel(this.currentVy);
     }
-    public static void main(String[] args) {
-        State s = new State(0, 0, 1, 0);
-    }
+    
 }
