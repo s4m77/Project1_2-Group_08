@@ -22,29 +22,30 @@ public class Euler{
     private String z= "h(x,y) = ";
     Function h;
 
+    State s;
+
     public final double TIMEMARGE; // step size
     private double Mk; 
     private double Ms;
 
-    private int xLimit = 20, yLimit = 20;
+    private double xLimit = 20.0, yLimit = 20.0;
 
     //constants
     static double GRAVITY= 9.81;
     
 
-    public Euler(State s, Function h, double TIMEMARGE, FileInputManager f){
-        this.previousx= s.getxPos();
-        this.previousy= s.getyPos();
-        this.previousVx= s.getxVel();
-        this.previousVy= s.getyVel(); 
-        this.previousAx= 0;
-        this.previousAy= 0;
-        this.h = h;
-        z += h.getFunctionExpressionString();
+    public Euler(State s, Function h, double TIMEMARGE, FileInputManager f, double xLimit, double yLimit){
+        this.s = s;
+        this.previousx= s.getxPos(); this.previousy= s.getyPos();
+        this.previousVx= s.getxVel(); this.previousVy= s.getyVel(); 
+        this.previousAx= 0; this.previousAy= 0;
+        this.h = h; z += h.getFunctionExpressionString();
         this.TIMEMARGE = TIMEMARGE;
         this.f = f;
         this.Mk = f.grassKinetic();
         this.Ms = f.grassStatic();
+
+        this.xLimit = xLimit; this.yLimit = yLimit;
     }
 
     public void calcPartialDerivative(String z){
@@ -56,6 +57,10 @@ public class Euler{
         this.partialX= Derivation.derivativeX(previousx, previousy); //example
         this.partialY= Derivation.derivativeY(previousx, previousy); //example
     }
+
+    public void calculateMk(){}
+
+    public void calculateMs(){}
 
     public void calcAcceleration(){
         //using previous speeds and the constant Mk and g and the partial derivative,
@@ -153,6 +158,8 @@ public class Euler{
             check = previousVx>0 || previousVy>0;
         }
         checkSliding();
+
+        s.setxPos(this.currentx); s.setyPos(this.currenty); s.setxVel(this.currentVx); s.setyVel(this.currentVy);
     }
 
 }
