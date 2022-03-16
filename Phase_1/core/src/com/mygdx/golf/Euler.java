@@ -79,7 +79,7 @@ public class Euler{
     public void calcAcceleration(){
         //using previous speeds and the constant Mk and g and the partial derivative,
         //calculate the new acceleration, so currentAx and currentAy
-        calculateMk();
+        calculateMk(); //check if on grass or sand
         this.previousAx= (-1*GRAVITY*partialX) - Mk*GRAVITY*(previousVx/(Math.sqrt(previousVx*previousVx + previousVy*previousVy)));
         this.previousAy= (-1*GRAVITY*partialY) - Mk*GRAVITY*(previousVy/(Math.sqrt(previousVx*previousVx + previousVy*previousVy)));
     }
@@ -88,6 +88,7 @@ public class Euler{
         //using previous speeds and the constant Mk and g and the partial derivative,
         //calculate the new acceleration, so currentAx and currentAy
         //should the second term be negative or positive?
+        calculateMk(); // check if on grass or sand
         this.previousAx= (-1*GRAVITY*partialX) + Mk*GRAVITY*(partialX/(Math.sqrt(partialX*partialX + partialY*partialY)));
         this.previousAy= (-1*GRAVITY*partialY) + Mk*GRAVITY*(partialY/(Math.sqrt(partialX*partialX + partialY*partialY)));
     }
@@ -124,7 +125,7 @@ public class Euler{
         }
         else if(partialX !=0 || partialY != 0){
             
-            calculateMs();
+            calculateMs(); // check if on grass or sand
             
             if(Ms> Math.sqrt(partialX*partialX + partialY*partialY)){
                 //ball stays in rest
@@ -133,7 +134,7 @@ public class Euler{
                 //ball slides
                 while(Ms<= Math.sqrt(partialX*partialX + partialY*partialY)){
                     
-                    calculateMs();
+                    calculateMs();//check if on grass or sand
 
                     calcPartialDerivative(z);
                     calcSlidingAcceleration();
@@ -180,5 +181,7 @@ public class Euler{
 
         s.setxPos(this.currentx); s.setyPos(this.currenty); s.setxVel(this.currentVx); s.setyVel(this.currentVy);
     }
-
+    public static void main(String[] args) {
+        State s = new State(0, 0, 1, 0);
+    }
 }
