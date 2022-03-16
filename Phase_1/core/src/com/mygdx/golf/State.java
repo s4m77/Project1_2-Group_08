@@ -1,8 +1,8 @@
 package com.mygdx.golf;
 
 public class State {
-    private double xPos =1;
-    private double yPos =1;
+    private double xPos = 1;
+    private double yPos = 1;
     private double xVel = 0;
     private double yVel = 0;
 
