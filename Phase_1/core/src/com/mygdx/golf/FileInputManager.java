@@ -53,8 +53,8 @@ public class FileInputManager {
 
     public double getInitialX()      {return Double.parseDouble(input[0]);}
     public double getInitialY()      {return Double.parseDouble(input[1]);}
-    public double getXt()            {return Double.parseDouble(input[2]);}
-    public double getYt()            {return Double.parseDouble(input[3]);}
+    public double getTargetX()       {return Double.parseDouble(input[2]);}
+    public double getTargetY()       {return Double.parseDouble(input[3]);}
     public double getRadius()        {return Double.parseDouble(input[4]);}
     public double grassKinetic()     {return Double.parseDouble(input[5]);}
     public double grassStatic()      {return Double.parseDouble(input[6]);}
