@@ -3,8 +3,8 @@ package com.mygdx.golf;
 import com.badlogic.gdx.math.Vector2;
 
 public class State {
-    private double xPos =1;
-    private double yPos =1;
+    private double xPos = 1;
+    private double yPos = 1;
     private double xVel = 0;
     private double yVel = 0;
 

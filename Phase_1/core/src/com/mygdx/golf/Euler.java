@@ -62,31 +62,42 @@ public class Euler {
         this.partialY = Derivation.derivativeY(previousx, previousy); // example
     }
 
-    public void calculateMk() {
+    public void calculateMk(){
+        double[] x = f.sandPitX(), y = f.sandPitY();
+        double xPos = s.getxPos(), yPos = s.getyPos();
+        if (((xPos > x[0]) && (xPos < x[1])) && ((yPos > y[0]) && (yPos < y[1])))
+            this.Mk = f.sandKinetic();
+        else 
+            this.Mk = f.grassKinetic();
+    }    
+
+    public void calculateMs(){
+        double[] x = f.sandPitX(), y = f.sandPitY();
+        double xPos = s.getxPos(), yPos = s.getyPos();
+        if (((xPos > x[0]) && (xPos < x[1])) && ((yPos > y[0]) && (yPos < y[1])))
+            this.Ms = f.sandStatic();
+        else 
+            this.Ms = f.grassStatic();
     }
 
-    public void calculateMs() {
+    public void calcAcceleration(){
+        //using previous speeds and the constant Mk and g and the partial derivative,
+        //calculate the new acceleration, so currentAx and currentAy
+        calculateMk(); //check if on grass or sand
+        this.previousAx= (-1*GRAVITY*partialX) - Mk*GRAVITY*(previousVx/(Math.sqrt(previousVx*previousVx + previousVy*previousVy)));
+        this.previousAy= (-1*GRAVITY*partialY) - Mk*GRAVITY*(previousVy/(Math.sqrt(previousVx*previousVx + previousVy*previousVy)));
     }
 
-    public void calcAcceleration() {
-        // using previous speeds and the constant Mk and g and the partial derivative,
-        // calculate the new acceleration, so currentAx and currentAy
-        this.previousAx = (-1 * GRAVITY * partialX)
-                - Mk * GRAVITY * (previousVx / (Math.sqrt(previousVx * previousVx + previousVy * previousVy)));
-        this.previousAy = (-1 * GRAVITY * partialY)
-                - Mk * GRAVITY * (previousVy / (Math.sqrt(previousVx * previousVx + previousVy * previousVy)));
+    public void calcSlidingAcceleration(){
+        //using previous speeds and the constant Mk and g and the partial derivative,
+        //calculate the new acceleration, so currentAx and currentAy
+        //should the second term be negative or positive?
+        calculateMk(); // check if on grass or sand
+        this.previousAx= (-1*GRAVITY*partialX) + Mk*GRAVITY*(partialX/(Math.sqrt(partialX*partialX + partialY*partialY)));
+        this.previousAy= (-1*GRAVITY*partialY) + Mk*GRAVITY*(partialY/(Math.sqrt(partialX*partialX + partialY*partialY)));
     }
 
-    public void calcSlidingAcceleration() {
-        // using previous speeds and the constant Mk and g and the partial derivative,
-        // calculate the new acceleration, so currentAx and currentAy
-        // should the second term be negative or positive?
-        this.previousAx = (-1 * GRAVITY * partialX)
-                + Mk * GRAVITY * (partialX / (Math.sqrt(partialX * partialX + partialY * partialY)));
-        this.previousAy = (-1 * GRAVITY * partialY)
-                + Mk * GRAVITY * (partialY / (Math.sqrt(partialX * partialX + partialY * partialY)));
-    }
-
+   
     public void calcVelocity() {
         this.currentVx = previousVx + TIMEMARGE * previousAx;
         this.currentVy = previousVy + TIMEMARGE * previousAy;
@@ -110,9 +121,30 @@ public class Euler {
             // ball stays in rest
             return;
         }
-        if (Ms > Math.sqrt(partialX * partialX + partialY * partialY)) {
-            // ball stays in rest
-            return;
+        else if(partialX !=0 || partialY != 0){
+            
+            calculateMs(); // check if on grass or sand
+            
+            if(Ms> Math.sqrt(partialX*partialX + partialY*partialY)){
+                //ball stays in rest
+            }
+            else{
+                //ball slides
+                while(Ms<= Math.sqrt(partialX*partialX + partialY*partialY)){
+                    
+                    calculateMs();//check if on grass or sand
+
+                    calcPartialDerivative(z);
+                    calcSlidingAcceleration();
+                    calcVelocity();
+                    calcNewPos();
+                    System.out.println(currentx);
+                    System.out.println(currenty);
+                    setPreviousState(currentx, currenty, currentVx, currentVy);
+
+                    calcPartialDerivative(z);
+                }
+            }
         }
         // ball slides
         while (Ms <= Math.sqrt(partialX * partialX + partialY * partialY)) {
@@ -146,6 +178,8 @@ public class Euler {
             System.out.println(currenty);
             setPreviousState(currentx, currenty, currentVx, currentVy);
 
+            s.setxPos(this.currentx); s.setyPos(this.currenty); s.setxVel(this.currentVx); s.setyVel(this.currentVy);
+
         }
         checkSliding();
 
@@ -154,5 +188,5 @@ public class Euler {
         s.setxVel(this.currentVx);
         s.setyVel(this.currentVy);
     }
-
+    
 }
