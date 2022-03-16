@@ -42,31 +42,33 @@ public class FileInputManager {
     public void readFile() throws IOException {
         input = new String[14]; 
         read = new BufferedReader(new FileReader(new File(pathInput.getFile())));
-        for (int i = 0; i < input.length; i++) {
+
+        for (int i = 0; i < 12; i++) {
+            
             String s = read.readLine();
-            String s1;
+            System.out.println(s);
             char[] c = s.toCharArray();
             for (int j = 0; j < c.length; j++) {
                 
                 Character chr = c[j];
                 if(chr.equals('=')){
                     StringBuilder build = new StringBuilder(s);
-                    s1 = build.substring(j+1);
-                    input[i] = s1;
+                    s = build.substring(j+1);
+                    input[i] = s;
                     break;
                 }
             }
         }
+
         read = new BufferedReader(new FileReader(new File(pathVelocity.getFile())));
         for (int i = 12; i < input.length; i++) {
-            String s = read.readLine();
-            String s1;
-            char[] c = s.toCharArray();
-            for (int j = 0; j < c.length; j++) {
+            String s1 = read.readLine();
+            char[] c1 = s1.toCharArray();
+            for (int j = 0; j < c1.length; j++) {
                 
-                Character chr = c[j];
+                Character chr = c1[j];
                 if(chr.equals('=')){
-                    StringBuilder build = new StringBuilder(s);
+                    StringBuilder build = new StringBuilder(s1);
                     s1 = build.substring(j+1);
                     input[i] = s1;
                     break;
@@ -163,6 +165,12 @@ public class FileInputManager {
             }
         }
         read.close();
+    }
+    public static void main(String[] args) {
+        FileInputManager f = new FileInputManager();
+        for (int i = 0; i < f.getInputArray().length - 1; i++) {
+            System.out.println(f.getInputArray()[i]);
+        }
     }
     
 }
