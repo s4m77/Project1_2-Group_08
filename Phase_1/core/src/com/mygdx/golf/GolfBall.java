@@ -1,28 +1,24 @@
 package com.mygdx.golf;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.nio.Buffer;
+import java.util.Vector;
+
+import com.badlogic.gdx.math.Vector3;
 
 public class GolfBall {
-    
-    double x, y, radius, speed, momentum;
 
 
-    GolfBall(int x, int y){
-        this. x = x; this.y = y;
-        //radius = 2.13;
-        speed = 0;
+
+    GolfBall(float x, float y, float z){
 
 
     }
     //set speed aof ball
-    public void setSpeed(double speed){
-        this.speed = speed;
+    public Vector3 setSpeed(float x, float y, float z){
+
     }
     //move a ball to a given position
-    public void moveBall(double x, double y){
-        this.x = x; this.y = y;
+    public Vector3 moveBall(float x, float y, float z){
+        return ballCoordinates.add(x, y, z);
     }
 
 
