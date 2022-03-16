@@ -50,7 +50,7 @@ public class FileInputManager {
         }
         read.close();
     }
-
+    //ACCESSORS
     public double getInitialX()      {return Double.parseDouble(input[0]);}
     public double getInitialY()      {return Double.parseDouble(input[1]);}
     public double getTargetX()       {return Double.parseDouble(input[2]);}
@@ -59,6 +59,8 @@ public class FileInputManager {
     public double grassKinetic()     {return Double.parseDouble(input[5]);}
     public double grassStatic()      {return Double.parseDouble(input[6]);}
     public String getHeightProfile() {return input[7];}
+    public double sandKinetic()      {return Double.parseDouble(input[10]);}
+    public double sandStatic()       {return Double.parseDouble(input[11]);}
     public double[] sandPitX(){
         double[] result = new double[2];
         char[] s = input[8].toCharArray();
@@ -75,14 +77,13 @@ public class FileInputManager {
         }
         return result;
     }
-
     public double[] sandPitY(){
         double[] result = new double[2];
         char[] s = input[9].toCharArray();
         for (int i = 0; i < s.length; i++) {
             Character c = s[i];
             if (c.equals('y')){
-                StringBuilder build = new StringBuilder(input[8]);
+                StringBuilder build = new StringBuilder(input[9]);
                 String sub1 = build.substring(0, i-1);
                 String sub2 = build.substring(i+2);
                 result[0] = Double.parseDouble(sub1);
@@ -93,18 +94,5 @@ public class FileInputManager {
         return result;
     }
 
-    public double sandKinetic()      {return Double.parseDouble(input[10]);}
-    public double sandStatic()       {return Double.parseDouble(input[11]);}
-
-    public static void main(String[] args) {
-        FileInputManager f = new FileInputManager("input.txt");
-        String[] toPrint = f.getInputArray();
-        for (int i = 0; i < toPrint.length; i++) {
-            System.out.println(toPrint[i]);
-        }
-        double[] a = f.sandPitX();
-        System.out.println();
-        System.out.println(a[0] + " " + a[1]);
-
-    }
+    
 }
