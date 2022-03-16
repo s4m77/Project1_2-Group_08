@@ -1,3 +1,5 @@
+import com.mygdx.golf.Derivation;
+
 public class Euler{
     
     //positions
@@ -9,11 +11,13 @@ public class Euler{
     //accelerations
     private double previousAx, previousAy, currentAx, currentAy;
 
-    //partial derivatives
+    //partial derivatives & heightprofile
     private double partialX, partialY;
+    //private String z= "h(x,y) = e^(-((x*x)+(y*y))/40)";
+    private String z= "h(x,y) = 2*x*x";
 
     //constants
-    static double GRAVITY= 0.981;
+    static double GRAVITY= 9.81;
     static double TIMEMARGE= 0.1; // step
     static double COURSEPROFILE= 0; //heightprofile / z
     static double Mk= 0.1; 
@@ -28,15 +32,14 @@ public class Euler{
         this.previousAy= 0;
     }
 
-    public void calcPartialDerivative(double z){
+    public void calcPartialDerivative(String z){
         //implement here calculation of partial derivative according to courseprofile
         //so derivativecalculator will return the partial derivative of a function
-        //if this is a number we can immediately use it
-        //if this is another function (including either x or y) we can fill in currentx or currenty, to
-        //finally get the result
         //calcPartialDerivative needs to be called again every time there is a new x or y position
-        this.partialX= 0.1; //example
-        this.partialY= 0.1; //example
+        Derivation.setFunction(z);
+
+        this.partialX= Derivation.derivativeX(previousx, previousy); //example
+        this.partialY= Derivation.derivativeY(previousx, previousy); //example
     }
 
     public void calcAcceleration(){
@@ -91,10 +94,11 @@ public class Euler{
             else{
                 //ball slides
                 while(Ms<= Math.sqrt(partialX*partialX + partialY*partialY)){
-                    if(previousx< 0 || previousy<0){
+                    /*if(previousx< 0 || previousy<0){
                         return;
-                    }
-                    calcPartialDerivative(0);
+                    }*/
+                    //this is for negative values to not eternally keep running
+                    calcPartialDerivative(z);
                     calcSlidingAcceleration();
                     calcSpeed();
                     calcNewPos();
@@ -104,7 +108,7 @@ public class Euler{
                     setPreviousVy(currentVy);
                     setPreviousX(currentx);
                     setPreviousY(currenty);
-                    calcPartialDerivative(0);
+                    calcPartialDerivative(z);
                     }
             }
         }
@@ -115,7 +119,7 @@ public class Euler{
             if(previousx< 0 || previousy<0){
                 return;
             }
-            calcPartialDerivative(0);
+            calcPartialDerivative(z);
             calcAcceleration();
             calcSpeed();
             calcNewPos();
@@ -125,7 +129,7 @@ public class Euler{
             setPreviousVy(currentVy);
             setPreviousX(currentx);
             setPreviousY(currenty);
-            calcPartialDerivative(0);
+            calcPartialDerivative(z);
         }
             checkSliding();
     }
@@ -156,7 +160,7 @@ public class Euler{
     }*/
 
     public static void main(String[] args) {
-        Euler eul= new Euler(0, 0, 1, 1);
+        Euler eul= new Euler(0, 0, 1, 0);
         eul.giveSolution();
         //eng.giveSolution();
 
