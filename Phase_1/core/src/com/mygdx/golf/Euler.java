@@ -19,7 +19,7 @@ public class Euler{
     //partial derivatives & heightprofile
     private double partialX, partialY;
     //private String z= "h(x,y) = e^(-((x*x)+(y*y))/40)";
-    private String z= "h(x,y) = ";
+    private String z= "h(x,y) = 0";
     Function h;
 
     State s;
@@ -161,5 +161,5 @@ public class Euler{
 
         s.setxPos(this.currentx); s.setyPos(this.currenty); s.setxVel(this.currentVx); s.setyVel(this.currentVy);
     }
-
 }
+
