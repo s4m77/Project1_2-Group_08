@@ -58,13 +58,28 @@ public class Euler{
         this.partialY= Derivation.derivativeY(previousx, previousy); //example
     }
 
-    public void calculateMk(){}
+    public void calculateMk(){
+        double[] x = f.sandPitX(), y = f.sandPitY();
+        double xPos = s.getxPos(), yPos = s.getyPos();
+        if (((xPos > x[0]) && (xPos < x[1])) && ((yPos > y[0]) && (yPos < y[1])))
+            this.Mk = f.sandKinetic();
+        else 
+            this.Mk = f.grassKinetic();
+    }    
 
-    public void calculateMs(){}
+    public void calculateMs(){
+        double[] x = f.sandPitX(), y = f.sandPitY();
+        double xPos = s.getxPos(), yPos = s.getyPos();
+        if (((xPos > x[0]) && (xPos < x[1])) && ((yPos > y[0]) && (yPos < y[1])))
+            this.Ms = f.sandStatic();
+        else 
+            this.Ms = f.grassStatic();
+    }
 
     public void calcAcceleration(){
         //using previous speeds and the constant Mk and g and the partial derivative,
         //calculate the new acceleration, so currentAx and currentAy
+        calculateMk();
         this.previousAx= (-1*GRAVITY*partialX) - Mk*GRAVITY*(previousVx/(Math.sqrt(previousVx*previousVx + previousVy*previousVy)));
         this.previousAy= (-1*GRAVITY*partialY) - Mk*GRAVITY*(previousVy/(Math.sqrt(previousVx*previousVx + previousVy*previousVy)));
     }
@@ -108,16 +123,18 @@ public class Euler{
             //ball stays in rest
         }
         else if(partialX !=0 || partialY != 0){
+            
+            calculateMs();
+            
             if(Ms> Math.sqrt(partialX*partialX + partialY*partialY)){
                 //ball stays in rest
             }
             else{
                 //ball slides
                 while(Ms<= Math.sqrt(partialX*partialX + partialY*partialY)){
-                    /*if(previousx< 0 || previousy<0){
-                        return;
-                    }*/
-                    //this is for negative values to not eternally keep running
+                    
+                    calculateMs();
+
                     calcPartialDerivative(z);
                     calcSlidingAcceleration();
                     calcSpeed();
@@ -154,6 +171,8 @@ public class Euler{
             setPreviousX(currentx);
             setPreviousY(currenty);
             calcPartialDerivative(z);
+
+            s.setxPos(this.currentx); s.setyPos(this.currenty); s.setxVel(this.currentVx); s.setyVel(this.currentVy);
 
             check = previousVx>0 || previousVy>0;
         }
