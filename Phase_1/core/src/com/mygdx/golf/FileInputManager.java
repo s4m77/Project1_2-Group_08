@@ -4,21 +4,26 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.text.ParseException;
+import java.net.URL;
+
+
+
 
 public class FileInputManager {
 
-    String file;
+    String fileName;
+    BufferedReader read;
+    URL path;
     /**
      * array storing the input.txt file values
      * stores, in order: [0]:x0, [1]:y0, [2]:xt, [3]:yt, [4]:r, [5]:muk, [6]:mus
      * [7]:heightProfile, [8]:sandPitX, [9]:sandPitY, [10]:muks, [11]:muss
      */
     String[] input;
-    public FileInputManager(String file){
-        this.file = file;
-
-        try {readFile(file);} 
+    public FileInputManager(String fileName){
+        this.path = FileInputManager.class.getResource("input.txt");
+        this.fileName = fileName;
+        try {readFile(fileName);} 
         catch (IOException e) {e.printStackTrace();}
 
     }
@@ -27,7 +32,7 @@ public class FileInputManager {
 
     public void readFile(String fileName) throws IOException {
         input = new String[12]; 
-        BufferedReader read = new BufferedReader(new FileReader(new File("C:\\Users\\samgo\\OneDrive\\Documenti\\GitHub\\Project1_2-Group_08\\Phase_1\\core\\src\\com\\mygdx\\golf\\input.txt")));
+        read = new BufferedReader(new FileReader(new File(path.getFile())));
         for (int i = 0; i < input.length; i++) {
             String s = read.readLine();
             String s1;
