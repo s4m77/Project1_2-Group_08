@@ -1,31 +1,40 @@
 package com.mygdx.golf;
 
 import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 
-public class Boot extends ApplicationAdapter {
-	SpriteBatch batch;
-	Texture img;
+public class Boot extends Game {
 	
-	@Override
-	public void create () {
-		batch = new SpriteBatch();
-		img = new Texture("badlogic.jpg");
-	}
+    public static Boot INSTANCE;
+    public int screenWidth, screenHeight;
+    private OrthographicCamera orthographicCamera;
 
-	@Override
-	public void render () {
-		ScreenUtils.clear(1, 0, 0, 1);
-		batch.begin();
-		batch.draw(img, 0, 0);
-		batch.end();
-	}
-	
-	@Override
-	public void dispose () {
-		batch.dispose();
-		img.dispose();
-	}
+    public Boot() {
+        INSTANCE = this;
+    }
+
+    public void create() {
+        
+        this.screenHeight = Gdx.graphics.getHeight();
+        this.screenWidth = Gdx.graphics.getWidth();
+        this.orthographicCamera = new OrthographicCamera();
+        this.orthographicCamera.setToOrtho(false, screenWidth,screenHeight);
+        MapScreen mapScreen = new MapScreen(orthographicCamera);
+        Gdx.input.setInputProcessor(mapScreen);
+
+        setScreen(mapScreen);
+    }
+
+    public int getScreenHeight() {
+        return screenHeight;
+    }
+    public int getScreenWidth() {
+        return screenWidth;
+    }
 }
