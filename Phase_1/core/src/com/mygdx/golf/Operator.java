@@ -173,19 +173,6 @@ class Division extends Operator{
         
         return f1.getNumericalValue(value, v)/f2.getNumericalValue(value, v);
     }
-    
-    public static void main(String[] args) {
-        Operator x = new Variable("x"), y = new Variable("y"), a = new Number("-2"), b = new Number("3");
-
-        Operator f = x.multiply(a).add(y.multiply(b));
-        System.out.println("Starting Operator: " + f);
-        Operator fx = f.derivate("x"), fy = f.derivate("y");
-        System.out.println("d/dx = " + fx + "d/dy = " + fy);
-
-        Double xTest = f.getNumericalValue(3.0, "x"), yTest = f.getNumericalValue(2.0, "y");
-        System.out.println(xTest + " - " + yTest);
-        
-    }
 }
 /**
  * Class for handeling powers
