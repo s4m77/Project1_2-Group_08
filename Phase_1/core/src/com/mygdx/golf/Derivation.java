@@ -26,6 +26,7 @@ public class Derivation {
 
     public static void main(String[] args) {
         System.out.println(f.getFunctionExpressionString());
+        System.out.println(f.getDescription());
         double x=1.0;
         double y = 2.0;
         System.out.println(derivativeX(x, y));
