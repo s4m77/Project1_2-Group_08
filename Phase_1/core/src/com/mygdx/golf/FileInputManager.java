@@ -2,6 +2,7 @@ package com.mygdx.golf;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
@@ -11,29 +12,48 @@ import java.net.URL;
 
 public class FileInputManager {
 
+    static int shots;
     String fileName;
     BufferedReader read;
-    URL path;
+    URL pathInput;
+    URL velocityInput;
     /**
      * array storing the input.txt file values
      * stores, in order: [0]:x0, [1]:y0, [2]:xt, [3]:yt, [4]:r, [5]:muk, [6]:mus
      * [7]:heightProfile, [8]:sandPitX, [9]:sandPitY, [10]:muks, [11]:muss
      */
     String[] input;
-    public FileInputManager(String fileName){
-        this.path = FileInputManager.class.getResource("input.txt");
-        this.fileName = fileName;
-        try {readFile(fileName);} 
+    public FileInputManager(){
+        shots = 0;
+        this.pathInput = FileInputManager.class.getResource("input.txt");
+        this.velocityInput = FileInputManager.class.getResource("velocity.txt");
+        
+        try {readFile();} 
         catch (IOException e) {e.printStackTrace();}
-
     }
 
     public String[] getInputArray() {return this.input;}
 
-    public void readFile(String fileName) throws IOException {
-        input = new String[12]; 
-        read = new BufferedReader(new FileReader(new File(path.getFile())));
+    public void readFile() throws IOException {
+        input = new String[14]; 
+        read = new BufferedReader(new FileReader(new File(pathInput.getFile())));
         for (int i = 0; i < input.length; i++) {
+            String s = read.readLine();
+            String s1;
+            char[] c = s.toCharArray();
+            for (int j = 0; j < c.length; j++) {
+                
+                Character chr = c[j];
+                if(chr.equals('=')){
+                    StringBuilder build = new StringBuilder(s);
+                    s1 = build.substring(j+1);
+                    input[i] = s1;
+                    break;
+                }
+            }
+        }
+        read = new BufferedReader(new FileReader(new File(velocityInput.getFile())));
+        for (int i = 12; i < input.length; i++) {
             String s = read.readLine();
             String s1;
             char[] c = s.toCharArray();
@@ -93,6 +113,41 @@ public class FileInputManager {
         }
         return result;
     }
+    public double getV0x()           {return Double.parseDouble(input[12]);}
+    public double getV0y()           {return Double.parseDouble(input[13]);}
 
+    /**
+     * this method is used when wanting to perform a new shot:
+     * it will read again the velocity.txt file and update the
+     * initial velocity
+     * @param initialX new initial x position
+     * @param initialY new initial y position
+     * when calling the method, use as parameters current x and current y
+     * @throws IOException
+     */
+    public void newShot(Double initialX, Double initialY) throws IOException{
+        //count shots
+        shots++;
+        //update current x and y in input array
+        this.input[1] = initialX.toString(); this.input[2] = initialY.toString();
+        //update the new velocity in input array
+        read = new BufferedReader(new FileReader(new File(velocityInput.getFile())));
+        for (int i = 12; i < input.length; i++) {
+            String s = read.readLine();
+            String s1;
+            char[] c = s.toCharArray();
+            for (int j = 0; j < c.length; j++) {
+                
+                Character chr = c[j];
+                if(chr.equals('=')){
+                    StringBuilder build = new StringBuilder(s);
+                    s1 = build.substring(j+1);
+                    input[i] = s1;
+                    break;
+                }
+            }
+        }
+        read.close();
+    }
     
 }
