@@ -1,37 +1,43 @@
 package com.mygdx.golf;
 
 public class State {
-    private static double xPos =1;
-    private static double yPos =1;
-    private static double xVel = 0;
-    private static double yVel = 0;
+    private double xPos =1;
+    private double yPos =1;
+    private double xVel = 0;
+    private double yVel = 0;
 
-   
+    public State(double xPos, double yPos, double xVel, double yVel){
+        this.xPos = xPos;
+        this.yPos = yPos;
+        this.xVel = xVel;
+        this.yVel = yVel;
 
-    public static double getxPos() {
+    }
+
+    public double getxPos() {
         return xPos;
     }
-    public static double getyPos() {
+    public double getyPos() {
         return yPos;
     }
-    public static double getxVel() {
+    public double getxVel() {
         return xVel;
     }
-    public static double getyVel() {
+    public double getyVel() {
         return yVel;
     }
 
-    public static void setxPos(double xPos) {
-        State.xPos = xPos;
+    public void setxPos(double xPos) {
+        this.xPos = xPos;
     }
-    public static void setyPos(double yPos) {
-        State.yPos = yPos;
+    public void setyPos(double yPos) {
+        this.yPos = yPos;
     }
-    public static void setxVel(double xVel) {
-        State.xVel = xVel;
+    public void setxVel(double xVel) {
+        this.xVel = xVel;
     }
-    public static void setyVel(double yVel) {
-        State.yVel = yVel;
+    public void setyVel(double yVel) {
+        this.yVel = yVel;
     }
 }
 
