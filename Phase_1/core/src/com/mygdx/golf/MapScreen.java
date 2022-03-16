@@ -70,8 +70,8 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
             }
         }
         shapeRenderer.setColor(255, 255, 255, 1);
-        shapeRenderer.circle(metresToPixels((float) State.getxPos(), true),
-                metresToPixels((float) State.getyPos(), false), 
+        shapeRenderer.circle(metresToPixels((float) State.getxPosStatic(), true),
+                metresToPixels((float) State.getyPosStatic(), false), 
                 BALLWIDTH/metreToPixelCoeff);
 
         shapeRenderer.end();
