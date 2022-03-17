@@ -31,7 +31,7 @@ public class FileInputManager {
      */
     public FileInputManager(){
         shots = 0;
-        this.pathInput = FileInputManager.class.getResource("inputs/input_1.txt");
+        this.pathInput = FileInputManager.class.getResource("inputs/input_4.txt");
         this.pathVelocity = FileInputManager.class.getResource("inputs/velocity.txt");
         
         try {readFile();} 
@@ -48,7 +48,7 @@ public class FileInputManager {
         for (int i = 0; i < 12; i++) {
             
             String s = read.readLine();
-            System.out.println(s);
+            // System.out.println(s);
             char[] c = s.toCharArray();
             for (int j = 0; j < c.length; j++) {
                 

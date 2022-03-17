@@ -59,7 +59,6 @@ public class Engine {
             if(scored()) {
                 stopBall();
                 gameIsFinished = true;
-                System.out.println("Scored");
             }
         }
     }
