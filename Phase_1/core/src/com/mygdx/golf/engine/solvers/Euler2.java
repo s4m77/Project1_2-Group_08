@@ -26,14 +26,19 @@ public class Euler2 implements Solver {
         
         float epsilon = 0.1f;
         if(velocity.x < epsilon && velocity.x > -epsilon && velocity.y < epsilon && velocity.y > -epsilon  ) {
-            System.out.println("'zero speed'");
-            acceleration = engine.calcPartialDerivative(position);
+            //if ball stopped moving
             if(engine.getGrassStatic() > Math.sqrt(partials.x * partials.x + partials.y *
             partials.y)) {
-                System.out.println(position);
+
+                engine.stopBall();
                 return new Vector2(0,0);
             }
+            
+            acceleration = engine.calcSlidingAcceleration(position, velocity);
+
+            
         }
+
         return new Vector2(velocity.x + engine.getDt()*acceleration.x, velocity.y +
         engine.getDt()*acceleration.y);
 

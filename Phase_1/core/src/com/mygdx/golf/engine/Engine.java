@@ -18,20 +18,45 @@ public class Engine {
     private float grassStatic;
     private final float dt = 0.1f;
     private Solver solver;
+    private boolean ballIsStopped = false;
+    public FileInputManager inputManager;
 
     public Engine(Solver solver, FileInputManager inputManager) {
         solver.setEngine(this);
         this.solver = solver;
         System.out.println("h(x,y) =" + inputManager.getHeightProfile());
+
+
+
         this.heightFunction = new Function("h(x,y) =" + inputManager.getHeightProfile());
+
+        
         this.grassKinetic = (float) inputManager.grassKinetic();
         this.grassStatic = (float) inputManager.grassStatic();
         System.out.println("Grass static " + grassStatic);
+        this.inputManager = inputManager;
     }
 
     public void update() {
-        State.setPosition(solver.solvePos(State.getPosition(), State.getVelocity()));
-        State.setVelocity(solver.solveVel(State.getPosition(), State.getVelocity()));
+        if(!ballIsStopped) {
+            State.setPosition(solver.solvePos(State.getPosition(), State.getVelocity()));
+            State.setVelocity(solver.solveVel(State.getPosition(), State.getVelocity()));
+        }
+         }
+    
+
+    public boolean getBallIsStopped() {
+        return ballIsStopped;
+    }
+    public void stopBall() {
+        ballIsStopped = true;
+    }
+
+    public void newShot(Vector2 velocity) {
+        if(ballIsStopped) {
+            ballIsStopped = false;
+            State.setVelocity(velocity);    
+        }
     }
 
     public float calculateHeight(float x, float y) {

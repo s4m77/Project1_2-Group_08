@@ -4,8 +4,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
@@ -19,7 +21,7 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
     private OrthographicCamera camera;
     private SpriteBatch batch;
     private ShapeRenderer shapeRenderer;
-
+    private BitmapFont font;
     private float metreToPixelCoeff = 0.01f;
 
     private final float BALLWIDTH = 0.1f;
@@ -33,7 +35,8 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
         this.shapeRenderer = new ShapeRenderer();
         this.batch = new SpriteBatch();
         this.engine = engine;
-
+        font = new BitmapFont();
+        font.setColor(Color.BLACK);
     }
 
     public void update() {
@@ -53,33 +56,48 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        Gdx.graphics.getGL20().glEnable(GL20.GL_BLEND);
+        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        
+
         int p = 10;
         for (float i = 0; i <= Boot.INSTANCE.getScreenWidth(); i += p) {
             for (float j = 0; j <= Boot.INSTANCE.getScreenHeight(); j += p) {
 
                 float x = pixelsToMetres(i, true);
                 float y = pixelsToMetres(j, false);
-                // float n = (float) (Math.sin(x + y) / 6 +0.5 );
-                float n = engine.calculateHeight(x, y);
-                // System.out.println("n " + n);
-                // System.out.println("n1 " + n1);
-                shapeRenderer.setColor(0,1-n , 0, 1);
 
-                shapeRenderer.rect(i , j, p, p);
+                float n = engine.calculateHeight(x, y);
+                if (n > 10 || n < -10) {
+                    continue;
+                }
+
+                shapeRenderer.setColor(0, n, 0, 1);
+
+                shapeRenderer.rect(i, j, p, p);
 
             }
         }
         shapeRenderer.setColor(255, 255, 255, 1);
-        
-        shapeRenderer.circle(metresToPixels((float) State.getPosition().x, true),
-                metresToPixels((float) State.getPosition().y, false), 
-                BALLWIDTH/metreToPixelCoeff);
 
-        engine.update();
+        shapeRenderer.circle(metresToPixels((float) State.getPosition().x, true),
+                metresToPixels((float) State.getPosition().y, false),
+                BALLWIDTH / metreToPixelCoeff);
+
+        shapeRenderer.setColor(0, 0, 0, 1);
+        shapeRenderer.circle(metresToPixels((float) engine.inputManager.getTargetX(), true),
+                metresToPixels((float) engine.inputManager.getTargetY(), false),
+                (float) engine.inputManager.getRadius() / metreToPixelCoeff);
 
         shapeRenderer.end();
+
+        batch.begin();
+        if (engine.getBallIsStopped()) {
+            String str = "Ball stopped at : x = " + State.getPosition().x + ", y = " + State.getPosition().y;
+            font.draw(batch, str, 10, Boot.INSTANCE.getScreenHeight() - 10);
+        }
+        batch.end();
+        engine.update();
     }
 
     private float pixelsToMetres(float x, boolean forWidth) {
@@ -109,6 +127,7 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
     @Override
     public boolean keyTyped(char character) {
         // TODO Auto-generated method stub
+        System.out.println(character);
         return false;
     }
 
@@ -128,9 +147,9 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
     public boolean scrolled(float amountX, float amountY) {
         // if(metreToPixelCoeff < 0.00)
         if (amountY < 0) {
-            metreToPixelCoeff = metreToPixelCoeff /1.4f;
+            metreToPixelCoeff = metreToPixelCoeff / 1.4f;
         } else {
-            metreToPixelCoeff =metreToPixelCoeff * 1.4f;
+            metreToPixelCoeff = metreToPixelCoeff * 1.4f;
         }
         return false;
     }
