@@ -16,7 +16,7 @@ public class Engine {
     private final float GRAVITY = 9.81f;
     private float grassKinetic;
     private float grassStatic;
-    private final float dt = 0.1f;
+    private final float dt = 0.2f;
     private Solver solver;
     private boolean ballIsStopped = false;
     public FileInputManager inputManager;
@@ -42,7 +42,8 @@ public class Engine {
             State.setPosition(solver.solvePos(State.getPosition(), State.getVelocity()));
             State.setVelocity(solver.solveVel(State.getPosition(), State.getVelocity()));
         }
-         }
+        System.out.println(State.getPosition());
+    }
     
 
     public boolean getBallIsStopped() {
