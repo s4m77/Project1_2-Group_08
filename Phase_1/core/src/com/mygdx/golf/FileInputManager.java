@@ -40,7 +40,7 @@ public class FileInputManager {
      * @throws IOException if file not found 
      */
     public void readFile() throws IOException {
-        input = new String[14]; 
+        input = new String[12]; 
         read = new BufferedReader(new FileReader(new File(pathInput.getFile())));
 
         for (int i = 0; i < 12; i++) {
@@ -64,7 +64,7 @@ public class FileInputManager {
         for (int i = 12; i < input.length; i++) {
             String s1 = read.readLine();
             char[] c1 = s1.toCharArray();
-            for (int j = 0; j < c1.length; j++) {
+            for (int j = 0; j < c1.length-1; j++) {
                 
                 Character chr = c1[j];
                 if(chr.equals('=')){
@@ -168,8 +168,8 @@ public class FileInputManager {
     }
     public static void main(String[] args) {
         FileInputManager f = new FileInputManager();
-        for (int i = 0; i < f.getInputArray().length - 1; i++) {
-            System.out.println(f.getInputArray()[i]);
+        for (String string : f.getInputArray()) {
+            System.out.println(string);
         }
     }
     
