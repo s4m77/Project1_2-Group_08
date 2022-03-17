@@ -1,9 +1,6 @@
 package com.mygdx.golf.engine;
 
-import org.mariuszgromada.math.mxparser.Expression;
 import org.mariuszgromada.math.mxparser.Function;
-
-import com.badlogic.gdx.math.Vector;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.golf.Derivation;
 import com.mygdx.golf.FileInputManager;
