@@ -9,12 +9,12 @@ import java.net.URL;
 import com.badlogic.gdx.math.Vector2;
 
 
-
-
 public class FileInputManager {
 
-    public static int shots;
+    protected static String filePathInput = "inputs/input_1.txt";
+    protected static String filePathVelocity = "inputs/velocity.txt";
     
+    public static int shots;
     private BufferedReader read;
     private URL pathInput;
     private URL pathVelocity;
@@ -31,8 +31,8 @@ public class FileInputManager {
      */
     public FileInputManager(){
         shots = 0;
-        this.pathInput = FileInputManager.class.getResource("inputs/input_4.txt");
-        this.pathVelocity = FileInputManager.class.getResource("inputs/velocity.txt");
+        this.pathInput = FileInputManager.class.getResource(filePathInput);
+        this.pathVelocity = FileInputManager.class.getResource(filePathVelocity);
         
         try {readFile();} 
         catch (IOException e) {e.printStackTrace();}

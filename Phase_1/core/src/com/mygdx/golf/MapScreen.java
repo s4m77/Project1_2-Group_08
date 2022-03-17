@@ -1,7 +1,6 @@
 package com.mygdx.golf;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Color;
@@ -12,8 +11,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
-import com.badlogic.gdx.physics.box2d.World;
 import com.mygdx.golf.engine.Engine;
 
 public class MapScreen extends ScreenAdapter implements InputProcessor {
@@ -147,32 +144,32 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
 
     @Override
     public boolean keyDown(int keycode) {
-        // TODO Auto-generated method stub
+    
         return false;
     }
 
     @Override
     public boolean keyTyped(char character) {
-        // TODO Auto-generated method stub
+    
         System.out.println(character);
         return false;
     }
 
     @Override
     public boolean keyUp(int keycode) {
-        // TODO Auto-generated method stub
+    
         return false;
     }
 
     @Override
     public boolean mouseMoved(int screenX, int screenY) {
-        // TODO Auto-generated method stub
+    
         return false;
     }
 
     @Override
     public boolean scrolled(float amountX, float amountY) {
-        // if(metreToPixelCoeff < 0.00)
+        
         if (amountY < 0) {
             metreToPixelCoeff = metreToPixelCoeff / 1.4f;
         } else {
@@ -201,7 +198,7 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
 
     @Override
     public boolean touchDragged(int screenX, int screenY, int pointer) {
-        // TODO Auto-generated method stub
+    
         if (isShooting) {
             mouseShootEnd.x = screenX;
             mouseShootEnd.y = screenY;

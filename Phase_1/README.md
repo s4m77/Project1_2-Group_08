@@ -8,6 +8,12 @@ V_1.0 @17/03/2022
 
 # HOW TO START THIS PROGRAM: 
 
-    To start the Crazy Putting game, run DesktopLauncher.java file. To chose the desired initial inputs, use the input.txt and velocity.txt files.
+    *o start the Crazy Putting game, run the file:
+#                                                  DesktopLauncher.java 
+
+    To chose the desired initial inputs, use the static String parameters filePathInput -for inputs- and filePathVelocity -for initial velocity- in FileInputManager and enter the desired file path to use.
+    Alternatively, change the initial parameters in the file currently selected (by defaul input_1.txt and velocity.txt)
+
+
     To shoot the ball, drag the mouse from the golf ball: a line will appear to help in the aiming.
 
