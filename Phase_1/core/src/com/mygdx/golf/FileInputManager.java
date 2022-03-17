@@ -6,6 +6,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
 
+import com.badlogic.gdx.math.Vector2;
+
 
 
 
@@ -79,16 +81,18 @@ public class FileInputManager {
     }
     //ACCESSORS
     public String[] getInputArray() {return this.input;}
-    public double getInitialX()      {return Double.parseDouble(input[0]);}
-    public double getInitialY()      {return Double.parseDouble(input[1]);}
-    public double getTargetX()       {return Double.parseDouble(input[2]);}
-    public double getTargetY()       {return Double.parseDouble(input[3]);}
-    public double getRadius()        {return Double.parseDouble(input[4]);}
-    public double grassKinetic()     {return Double.parseDouble(input[5]);}
-    public double grassStatic()      {return Double.parseDouble(input[6]);}
+    public Vector2 getInitialPos() {
+        return new Vector2(Float.parseFloat(input[0]), Float.parseFloat(input[1]));
+    }
+    public Vector2 getTargetPos() {
+        return new Vector2(Float.parseFloat(input[2]), Float.parseFloat(input[3]));
+    }
+    public float getRadius()        {return Float.parseFloat(input[4]);}
+    public float grassKinetic()     {return Float.parseFloat(input[5]);}
+    public float grassStatic()      {return Float.parseFloat(input[6]);}
     public String getHeightProfile() {return input[7];}
-    public double sandKinetic()      {return Double.parseDouble(input[10]);}
-    public double sandStatic()       {return Double.parseDouble(input[11]);}
+    public float sandKinetic()      {return Float.parseFloat(input[10]);}
+    public float sandStatic()       {return Float.parseFloat(input[11]);}
     
     /**
      * this method translates an input of, e.g., -1<x<1
@@ -132,7 +136,10 @@ public class FileInputManager {
     }
     public double getV0x()           {return Double.parseDouble(input[12]);}
     public double getV0y()           {return Double.parseDouble(input[13]);}
+    public Vector2 getInitialVelocity() {
+        return new Vector2(Float.parseFloat(input[12]), Float.parseFloat(input[13]));
 
+    }
     /**
      * this method is used when wanting to perform a new shot:
      * it will read again the velocity.txt file and update the

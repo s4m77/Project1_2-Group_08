@@ -23,9 +23,8 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
     private ShapeRenderer shapeRenderer, shootingLine;
     private BitmapFont font;
 
-    
     private float metreToPixelCoeff = 0.01f;
-    //for moving around the map
+    // for moving around the map
     private Vector2 dragDelta;
     private Vector2 dragStart;
     private Vector2 oldDragDelta;
@@ -48,7 +47,7 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
         this.shootingLine = new ShapeRenderer();
         this.batch = new SpriteBatch();
         this.engine = engine;
-        this.dragDelta = new Vector2(0,0);
+        this.dragDelta = new Vector2(0, 0);
         font = new BitmapFont();
         font.setColor(Color.BLACK);
     }
@@ -85,23 +84,26 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
         }
         shapeRenderer.setColor(255, 255, 255, 1);
 
-        shapeRenderer.circle(metresToPixels((float) State.getPosition().x, true),
-                metresToPixels((float) State.getPosition().y, false),
+        shapeRenderer.circle(metresToPixels(State.getPosition().x, true),
+                metresToPixels(State.getPosition().y, false),
                 BALLWIDTH / metreToPixelCoeff);
 
         shapeRenderer.setColor(0, 0, 0, 1);
-        shapeRenderer.circle(metresToPixels((float) engine.inputManager.getTargetX(), true),
-                metresToPixels((float) engine.inputManager.getTargetY(), false),
-                (float) engine.inputManager.getRadius() / metreToPixelCoeff);
+        shapeRenderer.circle(metresToPixels(engine.getTargetPosition().x, true),
+                metresToPixels(engine.getTargetPosition().y, false),
+                engine.getTargetRadius() / metreToPixelCoeff);
 
         shapeRenderer.end();
 
         batch.begin();
+        String str = "Number of shots : " + engine.getNumberOfShots();
+        font.draw(batch, str, 10, 20);
         if (engine.getBallIsStopped()) {
-            String str = "Ball stopped at : x = " + State.getPosition().x + ", y = " + State.getPosition().y;
-
+            str = "Ball stopped at : x = " + State.getPosition().x + ", y = " + State.getPosition().y;
             font.draw(batch, str, 10, Boot.INSTANCE.getScreenHeight() - 10);
+
         }
+
         batch.end();
 
         renderShootingLine(shootingLine);
@@ -116,8 +118,8 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
         shootingLine.begin(ShapeRenderer.ShapeType.Line);
         if (isShooting) {
             Vector2 ballPosInMetres = State.getPosition();
-            Vector2 ballPosInPixels = new Vector2(metresToPixels((float) ballPosInMetres.x, true),
-                    metresToPixels((float) ballPosInMetres.y, false));
+            Vector2 ballPosInPixels = new Vector2(metresToPixels( ballPosInMetres.x, true),
+                    metresToPixels(ballPosInMetres.y, false));
             renderer.line(ballPosInPixels.x, ballPosInPixels.y, mouseShootEnd.x,
                     Boot.INSTANCE.getScreenHeight() - mouseShootEnd.y);
 
@@ -129,7 +131,7 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
         if (forWidth) {
             return (x - Boot.INSTANCE.getScreenWidth() / 2 + dragDelta.x) * metreToPixelCoeff;
         } else {
-            return (x - Boot.INSTANCE.getScreenHeight() / 2 + dragDelta.y ) * metreToPixelCoeff;
+            return (x - Boot.INSTANCE.getScreenHeight() / 2 + dragDelta.y) * metreToPixelCoeff;
         }
 
     }
@@ -139,7 +141,7 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
 
             return x / metreToPixelCoeff + Boot.INSTANCE.getScreenWidth() / 2 - dragDelta.x;
         } else {
-            return x / metreToPixelCoeff + Boot.INSTANCE.getScreenHeight() / 2- dragDelta.y;
+            return x / metreToPixelCoeff + Boot.INSTANCE.getScreenHeight() / 2 - dragDelta.y;
         }
     }
 
@@ -189,7 +191,7 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
                 isShooting = true;
             }
         }
-        if(button == 1 ) {
+        if (button == 1) {
             isDragging = true;
             dragStart = new Vector2(screenX, screenY);
             oldDragDelta = new Vector2(dragDelta.x, dragDelta.y);
@@ -204,10 +206,10 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
             mouseShootEnd.x = screenX;
             mouseShootEnd.y = screenY;
         }
-        if(isDragging) {
+        if (isDragging) {
 
             dragDelta.x = oldDragDelta.x - (screenX - dragStart.x);
-            dragDelta.y =  oldDragDelta.y + (screenY - dragStart.y);
+            dragDelta.y = oldDragDelta.y + (screenY - dragStart.y);
         }
         return false;
     }
@@ -226,7 +228,7 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
                 engine.newShot(new Vector2(velX, velY));
             }
         }
-        if( button ==1) {
+        if (button == 1) {
             isDragging = false;
         }
         return false;

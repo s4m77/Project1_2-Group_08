@@ -17,7 +17,6 @@ public class Boot extends Game {
     public static Boot INSTANCE;
     public int screenWidth, screenHeight;
     private OrthographicCamera orthographicCamera;
-    private FileInputManager fileInputManager;
     public Boot() {
         INSTANCE = this;
     }
@@ -28,12 +27,7 @@ public class Boot extends Game {
         this.orthographicCamera = new OrthographicCamera();
         this.orthographicCamera.setToOrtho(false, screenWidth,screenHeight);
 
-        FileInputManager fileInputManager = new FileInputManager();
-        // e^(-((x^2+y^2)/40))
-        State.setPosition(new Vector2((float) fileInputManager.getInitialX(),(float) fileInputManager.getInitialY()));
-        State.setVelocity(new Vector2((float) fileInputManager.getV0x(),(float) fileInputManager.getV0y()));
-
-        Engine engine = new Engine(new Euler2(), fileInputManager);
+        Engine engine = new Engine(new Euler2(), false);
         MapScreen mapScreen = new MapScreen(orthographicCamera, engine);
         Gdx.input.setInputProcessor(mapScreen);
 

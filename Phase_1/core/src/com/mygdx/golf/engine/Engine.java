@@ -18,45 +18,50 @@ public class Engine {
     private float grassStatic;
     private final float dt = 0.2f;
     private Solver solver;
-    private boolean ballIsStopped = false;
+    private boolean ballIsStopped = true;
     public FileInputManager inputManager;
+    private int numberOfShots = 0;
+    private Vector2 targetPosition;
+    private float targetRadius;
 
-    public Engine(Solver solver, FileInputManager inputManager) {
+    public Engine(Solver solver, boolean useInitialVelocity) {
         solver.setEngine(this);
         this.solver = solver;
-        System.out.println("h(x,y) =" + inputManager.getHeightProfile());
-
-
+        this.inputManager = new FileInputManager();
 
         this.heightFunction = new Function("h(x,y) =" + inputManager.getHeightProfile());
+        this.grassKinetic =  inputManager.grassKinetic();
+        this.grassStatic = inputManager.grassStatic();
+        this.targetPosition = inputManager.getTargetPos();
+        this.targetRadius = inputManager.getRadius();
+        State.setPosition(inputManager.getInitialPos());
+        if (useInitialVelocity) {
+            newShot(inputManager.getInitialVelocity());
 
-        
-        this.grassKinetic = (float) inputManager.grassKinetic();
-        this.grassStatic = (float) inputManager.grassStatic();
-        System.out.println("Grass static " + grassStatic);
-        this.inputManager = inputManager;
+        }
+
     }
 
     public void update() {
-        if(!ballIsStopped) {
+        if (!ballIsStopped) {
             State.setPosition(solver.solvePos(State.getPosition(), State.getVelocity()));
             State.setVelocity(solver.solveVel(State.getPosition(), State.getVelocity()));
         }
-        System.out.println(State.getPosition());
     }
-    
 
     public boolean getBallIsStopped() {
         return ballIsStopped;
     }
+
     public void stopBall() {
+        numberOfShots++;
         ballIsStopped = true;
     }
 
     public void newShot(Vector2 velocity) {
-        if(ballIsStopped) {
+        if (ballIsStopped) {
             ballIsStopped = false;
-            State.setVelocity(velocity);    
+            State.setVelocity(velocity);
         }
     }
 
@@ -83,17 +88,13 @@ public class Engine {
         // calculate the new acceleration, so currentAx and currentAy
         Vector2 partials = calcPartialDerivative(position);
         Vector2 acceleration = new Vector2();
-        
+
         acceleration.x = (-1 * GRAVITY * partials.x)
                 - grassKinetic * GRAVITY
                         * (velocity.x / ((float) Math.sqrt(velocity.x * velocity.x + velocity.y * velocity.y)));
         acceleration.y = (-1 * GRAVITY * partials.y)
                 - grassKinetic * GRAVITY
                         * (velocity.y / ((float) Math.sqrt(velocity.x * velocity.x + velocity.y * velocity.y)));
-
-        
-        
-
 
         return acceleration;
     }
@@ -119,6 +120,17 @@ public class Engine {
 
     public float getGrassStatic() {
         return grassStatic;
+    }
+
+    public int getNumberOfShots() {
+        return numberOfShots;
+    }
+
+    public Vector2 getTargetPosition() {
+        return targetPosition;
+    }
+    public float getTargetRadius() {
+        return targetRadius;
     }
 
 }
