@@ -22,14 +22,21 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
     private SpriteBatch batch;
     private ShapeRenderer shapeRenderer, shootingLine;
     private BitmapFont font;
+
+    
     private float metreToPixelCoeff = 0.01f;
+    //for moving around the map
+    private Vector2 dragDelta;
+    private Vector2 dragStart;
+    private Vector2 oldDragDelta;
+    private boolean isDragging;
 
     private final float BALLWIDTH = 0.1f;
     private Engine engine;
 
     // for shooting
-    private Vector2 mouseStartPos;
-    private Vector2 mouseDragPos;
+    private Vector2 mouseShootStart;
+    private Vector2 mouseShootEnd;
     private boolean isShooting;
 
     // game objects
@@ -41,6 +48,7 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
         this.shootingLine = new ShapeRenderer();
         this.batch = new SpriteBatch();
         this.engine = engine;
+        this.dragDelta = new Vector2(0,0);
         font = new BitmapFont();
         font.setColor(Color.BLACK);
     }
@@ -64,17 +72,12 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
                 float y = pixelsToMetres(j, false);
 
                 float n = engine.calculateHeight(x, y);
-                // if (n > 10 || n < -10) {
-                // continue;
-                // }
-                
-                if (n < 0.3f) {
-                    shapeRenderer.setColor(0, 0.3f, 0, 1);
-                } else {
-                    shapeRenderer.setColor(0, n, 0, 1);
+
+                if (n > 10 || n < -10) {
+                    continue;
                 }
 
-                // shapeRenderer.setColor(0, n, 0, 1);
+                shapeRenderer.setColor(0, n / 10 + 0.4f, 0, 1);
 
                 shapeRenderer.rect(i, j, p, p);
 
@@ -105,14 +108,18 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
         engine.update();
     }
 
+    public float ln(float n) {
+        return (float) (-Math.log(1 - n)) / n;
+    }
+
     private void renderShootingLine(ShapeRenderer renderer) {
         shootingLine.begin(ShapeRenderer.ShapeType.Line);
         if (isShooting) {
             Vector2 ballPosInMetres = State.getPosition();
             Vector2 ballPosInPixels = new Vector2(metresToPixels((float) ballPosInMetres.x, true),
                     metresToPixels((float) ballPosInMetres.y, false));
-            renderer.line(ballPosInPixels.x, ballPosInPixels.y, mouseDragPos.x,
-                    Boot.INSTANCE.getScreenHeight() - mouseDragPos.y);
+            renderer.line(ballPosInPixels.x, ballPosInPixels.y, mouseShootEnd.x,
+                    Boot.INSTANCE.getScreenHeight() - mouseShootEnd.y);
 
         }
         shootingLine.end();
@@ -120,9 +127,9 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
 
     private float pixelsToMetres(float x, boolean forWidth) {
         if (forWidth) {
-            return (x - Boot.INSTANCE.getScreenWidth() / 2) * metreToPixelCoeff;
+            return (x - Boot.INSTANCE.getScreenWidth() / 2 + dragDelta.x) * metreToPixelCoeff;
         } else {
-            return (x - Boot.INSTANCE.getScreenHeight() / 2) * metreToPixelCoeff;
+            return (x - Boot.INSTANCE.getScreenHeight() / 2 + dragDelta.y ) * metreToPixelCoeff;
         }
 
     }
@@ -130,9 +137,9 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
     private float metresToPixels(float x, boolean forWidth) {
         if (forWidth) {
 
-            return x / metreToPixelCoeff + Boot.INSTANCE.getScreenWidth() / 2;
+            return x / metreToPixelCoeff + Boot.INSTANCE.getScreenWidth() / 2 - dragDelta.x;
         } else {
-            return x / metreToPixelCoeff + Boot.INSTANCE.getScreenHeight() / 2;
+            return x / metreToPixelCoeff + Boot.INSTANCE.getScreenHeight() / 2- dragDelta.y;
         }
     }
 
@@ -174,13 +181,18 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        // TODO Auto-generated method stub
-        System.out.println("Clicked");
-        System.out.println(screenX + " " + screenY);
-        if (engine.getBallIsStopped()) {
-            mouseStartPos = new Vector2(screenX, screenY);
-            mouseDragPos = new Vector2(screenX, screenY);
-            isShooting = true;
+        if (button == 0) {
+            // left click
+            if (engine.getBallIsStopped()) {
+                mouseShootStart = new Vector2(screenX, screenY);
+                mouseShootEnd = new Vector2(screenX, screenY);
+                isShooting = true;
+            }
+        }
+        if(button == 1 ) {
+            isDragging = true;
+            dragStart = new Vector2(screenX, screenY);
+            oldDragDelta = new Vector2(dragDelta.x, dragDelta.y);
         }
         return false;
     }
@@ -189,25 +201,33 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
     public boolean touchDragged(int screenX, int screenY, int pointer) {
         // TODO Auto-generated method stub
         if (isShooting) {
-            mouseDragPos.x = screenX;
-            mouseDragPos.y = screenY;
+            mouseShootEnd.x = screenX;
+            mouseShootEnd.y = screenY;
+        }
+        if(isDragging) {
+
+            dragDelta.x = oldDragDelta.x - (screenX - dragStart.x);
+            dragDelta.y =  oldDragDelta.y + (screenY - dragStart.y);
         }
         return false;
     }
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        // TODO Auto-generated method stub
-        if (isShooting) {
-            isShooting = false;
-            mouseDragPos.x = screenX;
-            mouseDragPos.y = screenY;
+        if (button == 0) {
+            // left click
+            if (isShooting) {
+                isShooting = false;
+                mouseShootEnd.x = screenX;
+                mouseShootEnd.y = screenY;
 
-            float velX = (mouseStartPos.x - mouseDragPos.x) / 100;
-            float velY = -(mouseStartPos.y - mouseDragPos.y) / 100;
-            System.out.println("vel x :" + velX);
-            System.out.println("vel y :" + velY);
-            engine.newShot(new Vector2(velX, velY));
+                float velX = (mouseShootStart.x - mouseShootEnd.x) / 50;
+                float velY = -(mouseShootStart.y - mouseShootEnd.y) / 50;
+                engine.newShot(new Vector2(velX, velY));
+            }
+        }
+        if( button ==1) {
+            isDragging = false;
         }
         return false;
     }
