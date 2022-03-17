@@ -13,13 +13,15 @@ public class Euler2 implements Solver {
 
     @Override
     public Vector2 solvePos(Vector2 position, Vector2 velocity) {
+        
         return new Vector2(position.x + engine.getDt() * velocity.x, position.y + engine.getDt() * velocity.y);
+        
     }
 
     @Override
     public Vector2 solveVel(Vector2 position, Vector2 velocity) {
         Vector2 acceleration = engine.calcAcceleration(position, velocity);
-
+        
         return new Vector2(velocity.x + engine.getDt() * acceleration.x, velocity.y + engine.getDt() * acceleration.y);
 
     }
