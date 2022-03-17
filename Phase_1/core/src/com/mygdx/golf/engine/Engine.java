@@ -48,6 +48,7 @@ public class Engine {
 
         partials.x = (float) Derivation.derivativeX(heightFunction, (double) position.x, (double) position.y); // example
         partials.y = (float) Derivation.derivativeY(heightFunction, (double) position.x, (double) position.y); // example
+
         return partials;
     }
 
@@ -56,13 +57,17 @@ public class Engine {
         // calculate the new acceleration, so currentAx and currentAy
         Vector2 partials = calcPartialDerivative(position);
         Vector2 acceleration = new Vector2();
-
+        
         acceleration.x = (-1 * GRAVITY * partials.x)
                 - grassKinetic * GRAVITY
                         * (velocity.x / ((float) Math.sqrt(velocity.x * velocity.x + velocity.y * velocity.y)));
         acceleration.y = (-1 * GRAVITY * partials.y)
                 - grassKinetic * GRAVITY
                         * (velocity.y / ((float) Math.sqrt(velocity.x * velocity.x + velocity.y * velocity.y)));
+
+        
+        
+
 
         return acceleration;
     }
