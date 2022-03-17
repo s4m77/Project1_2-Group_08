@@ -29,8 +29,8 @@ public class FileInputManager {
      */
     public FileInputManager(){
         shots = 0;
-        this.pathInput = FileInputManager.class.getResource("input.txt");
-        this.pathVelocity = FileInputManager.class.getResource("velocity.txt");
+        this.pathInput = FileInputManager.class.getResource("inputs/input_4.txt");
+        this.pathVelocity = FileInputManager.class.getResource("inputs/velocity.txt");
         
         try {readFile();} 
         catch (IOException e) {e.printStackTrace();}
