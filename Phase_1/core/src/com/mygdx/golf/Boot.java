@@ -30,8 +30,7 @@ public class Boot extends Game {
 
         FileInputManager fileInputManager = new FileInputManager();
         State.setPosition(new Vector2((float) fileInputManager.getInitialX(),(float) fileInputManager.getInitialY()));
-        State.setVelocity(new Vector2(0,0));
-        State.setVelocity(new Vector2(2,0));
+        State.setVelocity(new Vector2((float) fileInputManager.getV0x(),(float) fileInputManager.getV0y()));
 
         Engine engine = new Engine(new Euler2(), fileInputManager);
         MapScreen mapScreen = new MapScreen(orthographicCamera, engine);
