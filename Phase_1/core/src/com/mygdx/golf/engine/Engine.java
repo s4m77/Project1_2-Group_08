@@ -23,6 +23,8 @@ public class Engine {
     private int numberOfShots = 0;
     private Vector2 targetPosition;
     private float targetRadius;
+    public final float BALL_RADIUS = 0.1f;
+    public boolean gameIsFinished;
 
     public Engine(Solver solver, boolean useInitialVelocity) {
         solver.setEngine(this);
@@ -34,7 +36,8 @@ public class Engine {
         this.grassStatic = inputManager.grassStatic();
         this.targetPosition = inputManager.getTargetPos();
         this.targetRadius = inputManager.getRadius();
-        State.setPosition(inputManager.getInitialPos());
+
+        initGame();
         if (useInitialVelocity) {
             newShot(inputManager.getInitialVelocity());
 
@@ -42,15 +45,38 @@ public class Engine {
 
     }
 
+    public void initGame() {
+        State.setPosition(inputManager.getInitialPos());
+        numberOfShots = 0;
+        gameIsFinished = false;
+        
+    }
+
     public void update() {
         if (!ballIsStopped) {
             State.setPosition(solver.solvePos(State.getPosition(), State.getVelocity()));
             State.setVelocity(solver.solveVel(State.getPosition(), State.getVelocity()));
+            if(scored()) {
+                stopBall();
+                gameIsFinished = true;
+                System.out.println("Scored");
+            }
         }
     }
 
     public boolean getBallIsStopped() {
         return ballIsStopped;
+    }
+
+    public boolean scored(){
+        Vector2 ballPos = State.getPosition();
+
+        double xDiff = ballPos.x - targetPosition.x;
+        double yDiff = ballPos.y - targetPosition.y;
+    
+        double distance = Math.sqrt((Math.pow(xDiff, 2) + Math.pow(yDiff, 2)));
+    
+        return distance < (BALL_RADIUS + targetRadius);
     }
 
     public void stopBall() {
@@ -132,5 +158,6 @@ public class Engine {
     public float getTargetRadius() {
         return targetRadius;
     }
+    
 
 }

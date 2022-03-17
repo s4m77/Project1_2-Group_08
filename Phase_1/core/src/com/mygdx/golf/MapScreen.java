@@ -30,7 +30,6 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
     private Vector2 oldDragDelta;
     private boolean isDragging;
 
-    private final float BALLWIDTH = 0.1f;
     private Engine engine;
 
     // for shooting
@@ -56,13 +55,47 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
     public void render(float delta) {
         batch.setProjectionMatrix(camera.combined);
 
-        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClearColor(0, 0.4f, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         Gdx.graphics.getGL20().glEnable(GL20.GL_BLEND);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+        if(engine.gameIsFinished) {
+            renderEndScreen();
+            return;
+        }
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        
+       renderMap();
+        shapeRenderer.setColor(255, 255, 255, 1);
 
+        shapeRenderer.circle(metresToPixels(State.getPosition().x, true),
+                metresToPixels(State.getPosition().y, false),
+                engine.BALL_RADIUS / metreToPixelCoeff);
+
+        shapeRenderer.setColor(0, 0, 0, 1);
+        shapeRenderer.circle(metresToPixels(engine.getTargetPosition().x, true),
+                metresToPixels(engine.getTargetPosition().y, false),
+                engine.getTargetRadius() / metreToPixelCoeff);
+
+        shapeRenderer.end();
+
+        batch.begin();
+        String str = "Number of shots : " + engine.getNumberOfShots();
+        font.draw(batch, str, 10, 20);
+        if (engine.getBallIsStopped()) {
+            str = "Ball stopped at : x = " + State.getPosition().x + ", y = " + State.getPosition().y;
+            font.draw(batch, str, 10, Boot.INSTANCE.getScreenHeight() - 10);
+
+        }
+
+        batch.end();
+        renderShootingLine(shootingLine);
+        engine.update();
+    }
+    
+
+    public void renderMap() {
         int p = 10;
         for (float i = 0; i <= Boot.INSTANCE.getScreenWidth(); i += p) {
             for (float j = 0; j <= Boot.INSTANCE.getScreenHeight(); j += p) {
@@ -82,37 +115,20 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
 
             }
         }
-        shapeRenderer.setColor(255, 255, 255, 1);
+    }
 
-        shapeRenderer.circle(metresToPixels(State.getPosition().x, true),
-                metresToPixels(State.getPosition().y, false),
-                BALLWIDTH / metreToPixelCoeff);
-
-        shapeRenderer.setColor(0, 0, 0, 1);
-        shapeRenderer.circle(metresToPixels(engine.getTargetPosition().x, true),
-                metresToPixels(engine.getTargetPosition().y, false),
-                engine.getTargetRadius() / metreToPixelCoeff);
-
-        shapeRenderer.end();
-
+    public void renderEndScreen() {
         batch.begin();
-        String str = "Number of shots : " + engine.getNumberOfShots();
-        font.draw(batch, str, 10, 20);
-        if (engine.getBallIsStopped()) {
-            str = "Ball stopped at : x = " + State.getPosition().x + ", y = " + State.getPosition().y;
-            font.draw(batch, str, 10, Boot.INSTANCE.getScreenHeight() - 10);
-
-        }
+        font.getData().setScale(1.5f, 1.5f);
+        String str = "You made it in " + engine.getNumberOfShots() + " shots";
+        font.draw(batch, str, Boot.INSTANCE.getScreenWidth() / 2 - 94, Boot.INSTANCE.getScreenHeight() / 2+30);
+        font.draw(batch, "Press enter to restart", Boot.INSTANCE.getScreenWidth() / 2 - 90, Boot.INSTANCE.getScreenHeight() / 2 );
+       
 
         batch.end();
-
-        renderShootingLine(shootingLine);
-        engine.update();
     }
 
-    public float ln(float n) {
-        return (float) (-Math.log(1 - n)) / n;
-    }
+
 
     private void renderShootingLine(ShapeRenderer renderer) {
         shootingLine.begin(ShapeRenderer.ShapeType.Line);
@@ -154,7 +170,10 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
     @Override
     public boolean keyTyped(char character) {
         // TODO Auto-generated method stub
-        System.out.println(character);
+        
+        if(character == '\n' || character == '\r') {
+            engine.initGame();
+        }
         return false;
     }
 
