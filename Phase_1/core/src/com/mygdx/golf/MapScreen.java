@@ -27,7 +27,7 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
     private final float BALLWIDTH = 0.1f;
     private Engine engine;
 
-    //for shooting
+    // for shooting
     private Vector2 mouseStartPos;
     private Vector2 mouseDragPos;
     private boolean isShooting;
@@ -44,8 +44,6 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
         font = new BitmapFont();
         font.setColor(Color.BLACK);
     }
-
-   
 
     @Override
     public void render(float delta) {
@@ -66,11 +64,17 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
                 float y = pixelsToMetres(j, false);
 
                 float n = engine.calculateHeight(x, y);
-                if (n > 10 || n < -10) {
-                    continue;
+                // if (n > 10 || n < -10) {
+                // continue;
+                // }
+                
+                if (n < 0.3f) {
+                    shapeRenderer.setColor(0, 0.3f, 0, 1);
+                } else {
+                    shapeRenderer.setColor(0, n, 0, 1);
                 }
 
-                shapeRenderer.setColor(0, n, 0, 1);
+                // shapeRenderer.setColor(0, n, 0, 1);
 
                 shapeRenderer.rect(i, j, p, p);
 
@@ -92,7 +96,7 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
         batch.begin();
         if (engine.getBallIsStopped()) {
             String str = "Ball stopped at : x = " + State.getPosition().x + ", y = " + State.getPosition().y;
-            
+
             font.draw(batch, str, 10, Boot.INSTANCE.getScreenHeight() - 10);
         }
         batch.end();
@@ -106,11 +110,11 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
         if (isShooting) {
             Vector2 ballPosInMetres = State.getPosition();
             Vector2 ballPosInPixels = new Vector2(metresToPixels((float) ballPosInMetres.x, true),
-            metresToPixels((float) ballPosInMetres.y,false));
-			renderer.line(ballPosInPixels.x,ballPosInPixels.y, mouseDragPos.x,Boot.INSTANCE.getScreenHeight() - mouseDragPos.y);
+                    metresToPixels((float) ballPosInMetres.y, false));
+            renderer.line(ballPosInPixels.x, ballPosInPixels.y, mouseDragPos.x,
+                    Boot.INSTANCE.getScreenHeight() - mouseDragPos.y);
 
-            
-		}
+        }
         shootingLine.end();
     }
 
@@ -173,7 +177,7 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
         // TODO Auto-generated method stub
         System.out.println("Clicked");
         System.out.println(screenX + " " + screenY);
-        if(engine.getBallIsStopped()) {
+        if (engine.getBallIsStopped()) {
             mouseStartPos = new Vector2(screenX, screenY);
             mouseDragPos = new Vector2(screenX, screenY);
             isShooting = true;
@@ -184,7 +188,7 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
     @Override
     public boolean touchDragged(int screenX, int screenY, int pointer) {
         // TODO Auto-generated method stub
-        if(isShooting) {
+        if (isShooting) {
             mouseDragPos.x = screenX;
             mouseDragPos.y = screenY;
         }
@@ -194,13 +198,13 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         // TODO Auto-generated method stub
-        if(isShooting) {
+        if (isShooting) {
             isShooting = false;
             mouseDragPos.x = screenX;
             mouseDragPos.y = screenY;
 
-            float velX = (mouseStartPos.x - mouseDragPos.x) /100;
-            float velY = -(mouseStartPos.y - mouseDragPos.y) /100;
+            float velX = (mouseStartPos.x - mouseDragPos.x) / 100;
+            float velY = -(mouseStartPos.y - mouseDragPos.y) / 100;
             System.out.println("vel x :" + velX);
             System.out.println("vel y :" + velY);
             engine.newShot(new Vector2(velX, velY));
