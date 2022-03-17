@@ -29,6 +29,7 @@ public class Boot extends Game {
         this.orthographicCamera.setToOrtho(false, screenWidth,screenHeight);
 
         FileInputManager fileInputManager = new FileInputManager();
+        
         State.setPosition(new Vector2((float) fileInputManager.getInitialX(),(float) fileInputManager.getInitialY()));
         State.setVelocity(new Vector2((float) fileInputManager.getV0x(),(float) fileInputManager.getV0y()));
 

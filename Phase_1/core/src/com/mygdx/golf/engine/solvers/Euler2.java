@@ -24,9 +24,9 @@ public class Euler2 implements Solver {
         Vector2 acceleration = engine.calcAcceleration(position,velocity);
         Vector2 partials = engine.calcPartialDerivative(position);
         
-        float epsilon = 0.001f;
+        float epsilon = 0.1f;
         if(velocity.x < epsilon && velocity.x > -epsilon && velocity.y < epsilon && velocity.y > -epsilon  ) {
-            
+            System.out.println("'zero speed'");
             acceleration = engine.calcPartialDerivative(position);
             if(engine.getGrassStatic() > Math.sqrt(partials.x * partials.x + partials.y *
             partials.y)) {

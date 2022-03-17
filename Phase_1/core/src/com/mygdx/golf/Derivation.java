@@ -5,7 +5,7 @@ import org.mariuszgromada.math.mxparser.mathcollection.*;
 
 public class Derivation {
     //READ THIS FROM THE INPUT MODULE
-    public static Function f = new Function("h(x,y) = 0.5*(sin((x-y)/7)+0.9)");
+    public static Function f = new Function("h(x,y) = e");
     
     public static void setFunction(String funcString) {
         f = new Function(funcString);
@@ -43,6 +43,7 @@ public class Derivation {
     public static void main(String[] args) {
         System.out.println(f.getFunctionExpressionString());
         System.out.println(f.getDescription());
+        System.out.println(f.calculate(1));
         System.out.println("Resutl :" + calculateHeight(2,2));
         System.out.println("Resut2 :" + f.calculate(2,2));
         double x=1.0;
