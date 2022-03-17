@@ -20,12 +20,17 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
 
     private OrthographicCamera camera;
     private SpriteBatch batch;
-    private ShapeRenderer shapeRenderer;
+    private ShapeRenderer shapeRenderer, shootingLine;
     private BitmapFont font;
     private float metreToPixelCoeff = 0.01f;
 
     private final float BALLWIDTH = 0.1f;
     private Engine engine;
+
+    //for shooting
+    private Vector2 mouseStartPos;
+    private Vector2 mouseDragPos;
+    private boolean isShooting;
 
     // game objects
     public MapScreen(OrthographicCamera camera, Engine engine) {
@@ -33,26 +38,19 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
         this.camera.position
                 .set(new Vector3(Boot.INSTANCE.getScreenWidth() / 2, Boot.INSTANCE.getScreenHeight() / 2, 0));
         this.shapeRenderer = new ShapeRenderer();
+        this.shootingLine = new ShapeRenderer();
         this.batch = new SpriteBatch();
         this.engine = engine;
         font = new BitmapFont();
         font.setColor(Color.BLACK);
     }
 
-    public void update() {
-        batch.setProjectionMatrix(camera.combined);
-
-        if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
-            Gdx.app.exit();
-        }
-
-        Gdx.gl.glClearColor(1, 0, 0, 1);
-
-    }
+   
 
     @Override
     public void render(float delta) {
-        update();
+        batch.setProjectionMatrix(camera.combined);
+
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
@@ -94,10 +92,26 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
         batch.begin();
         if (engine.getBallIsStopped()) {
             String str = "Ball stopped at : x = " + State.getPosition().x + ", y = " + State.getPosition().y;
+            
             font.draw(batch, str, 10, Boot.INSTANCE.getScreenHeight() - 10);
         }
         batch.end();
+
+        renderShootingLine(shootingLine);
         engine.update();
+    }
+
+    private void renderShootingLine(ShapeRenderer renderer) {
+        shootingLine.begin(ShapeRenderer.ShapeType.Line);
+        if (isShooting) {
+            Vector2 ballPosInMetres = State.getPosition();
+            Vector2 ballPosInPixels = new Vector2(metresToPixels((float) ballPosInMetres.x, true),
+            metresToPixels((float) ballPosInMetres.y,false));
+			renderer.line(ballPosInPixels.x,ballPosInPixels.y, mouseDragPos.x,Boot.INSTANCE.getScreenHeight() - mouseDragPos.y);
+
+            
+		}
+        shootingLine.end();
     }
 
     private float pixelsToMetres(float x, boolean forWidth) {
@@ -157,18 +171,40 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         // TODO Auto-generated method stub
+        System.out.println("Clicked");
+        System.out.println(screenX + " " + screenY);
+        if(engine.getBallIsStopped()) {
+            mouseStartPos = new Vector2(screenX, screenY);
+            mouseDragPos = new Vector2(screenX, screenY);
+            isShooting = true;
+        }
         return false;
     }
 
     @Override
     public boolean touchDragged(int screenX, int screenY, int pointer) {
         // TODO Auto-generated method stub
+        if(isShooting) {
+            mouseDragPos.x = screenX;
+            mouseDragPos.y = screenY;
+        }
         return false;
     }
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         // TODO Auto-generated method stub
+        if(isShooting) {
+            isShooting = false;
+            mouseDragPos.x = screenX;
+            mouseDragPos.y = screenY;
+
+            float velX = (mouseStartPos.x - mouseDragPos.x) /100;
+            float velY = -(mouseStartPos.y - mouseDragPos.y) /100;
+            System.out.println("vel x :" + velX);
+            System.out.println("vel y :" + velY);
+            engine.newShot(new Vector2(velX, velY));
+        }
         return false;
     }
 
