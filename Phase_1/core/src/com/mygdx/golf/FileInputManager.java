@@ -40,7 +40,7 @@ public class FileInputManager {
      * @throws IOException if file not found 
      */
     public void readFile() throws IOException {
-        input = new String[12]; 
+        input = new String[14]; 
         read = new BufferedReader(new FileReader(new File(pathInput.getFile())));
 
         for (int i = 0; i < 12; i++) {
@@ -171,6 +171,7 @@ public class FileInputManager {
         for (String string : f.getInputArray()) {
             System.out.println(string);
         }
+        System.out.println(f.getV0x());
     }
     
 }
