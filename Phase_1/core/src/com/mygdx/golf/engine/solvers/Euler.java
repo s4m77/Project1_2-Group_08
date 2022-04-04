@@ -3,7 +3,7 @@ package com.mygdx.golf.engine.solvers;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.golf.engine.Engine;
 
-public class Euler2 implements Solver {
+public class Euler implements Solver {
     Engine engine;
 
     @Override

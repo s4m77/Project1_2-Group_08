@@ -20,21 +20,25 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
     private ShapeRenderer shapeRenderer, shootingLine;
     private BitmapFont font;
 
+    //coefficient from metres to pixels
     private float metreToPixelCoeff = 0.01f;
+
+    private Engine engine;
+
+
     // for moving around the map
     private Vector2 dragDelta;
     private Vector2 dragStart;
     private Vector2 oldDragDelta;
     private boolean isDragging;
 
-    private Engine engine;
 
     // for shooting
     private Vector2 mouseShootStart;
     private Vector2 mouseShootEnd;
     private boolean isShooting;
 
-    // game objects
+    // Initializes everything
     public MapScreen(OrthographicCamera camera, Engine engine) {
         this.camera = camera;
         this.camera.position
@@ -48,8 +52,11 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
         font.setColor(Color.BLACK);
     }
 
+
+    //native gdx method that is called for each frame
     @Override
     public void render(float delta) {
+        //Gdx stuff
         batch.setProjectionMatrix(camera.combined);
 
         Gdx.gl.glClearColor(0, 0.4f, 0, 1);
@@ -57,6 +64,8 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
 
         Gdx.graphics.getGL20().glEnable(GL20.GL_BLEND);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+
+        //if game is finished than only show end screen
         if(engine.gameIsFinished) {
             renderEndScreen();
             return;
@@ -64,12 +73,15 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         
        renderMap();
-        shapeRenderer.setColor(255, 255, 255, 1);
-
-        shapeRenderer.circle(metresToPixels(State.getPosition().x, true),
-                metresToPixels(State.getPosition().y, false),
+       
+       //draws golf ball
+       shapeRenderer.setColor(255, 255, 255, 1);
+        shapeRenderer.circle(metresToPixels(engine.state.getPosition().x, true),
+                metresToPixels(engine.state.getPosition().y, false),
                 engine.BALL_RADIUS / metreToPixelCoeff);
 
+
+        //draws the hole
         shapeRenderer.setColor(0, 0, 0, 1);
         shapeRenderer.circle(metresToPixels(engine.getTargetPosition().x, true),
                 metresToPixels(engine.getTargetPosition().y, false),
@@ -77,11 +89,13 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
 
         shapeRenderer.end();
 
+
+        //draws the text
         batch.begin();
         String str = "Number of shots : " + engine.getNumberOfShots();
         font.draw(batch, str, 10, 20);
         if (engine.getBallIsStopped()) {
-            str = "Ball stopped at : x = " + State.getPosition().x + ", y = " + State.getPosition().y;
+            str = "Ball stopped at : x = " + engine.state.getPosition().x + ", y = " + engine.state.getPosition().y;
             font.draw(batch, str, 10, Boot.INSTANCE.getScreenHeight() - 10);
 
         }
@@ -91,7 +105,9 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
         engine.update();
     }
     
-
+    //renders the map
+    //loops through (almost) all the pixels of the screen, and translate the x and y in metres in order to calculate the height
+    //with the height function. and thus choose a shade a color of green depending on the height.
     public void renderMap() {
         int p = 10;
         for (float i = 0; i <= Boot.INSTANCE.getScreenWidth(); i += p) {
@@ -105,7 +121,7 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
                 if (n > 10 || n < -10) {
                     continue;
                 }
-
+                //I found  n / 10 + 0.4f, was a good shade of green for any height function
                 shapeRenderer.setColor(0, n / 10 + 0.4f, 0, 1);
 
                 shapeRenderer.rect(i, j, p, p);
@@ -114,14 +130,13 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
         }
     }
 
+    //self explanatory
     public void renderEndScreen() {
         batch.begin();
         font.getData().setScale(1.5f, 1.5f);
         String str = "You made it in " + engine.getNumberOfShots() + " shots";
         font.draw(batch, str, Boot.INSTANCE.getScreenWidth() / 2 - 94, Boot.INSTANCE.getScreenHeight() / 2+30);
         font.draw(batch, "Press enter to restart", Boot.INSTANCE.getScreenWidth() / 2 - 90, Boot.INSTANCE.getScreenHeight() / 2 );
-       
-
         batch.end();
     }
 
@@ -130,7 +145,7 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
     private void renderShootingLine(ShapeRenderer renderer) {
         shootingLine.begin(ShapeRenderer.ShapeType.Line);
         if (isShooting) {
-            Vector2 ballPosInMetres = State.getPosition();
+            Vector2 ballPosInMetres = engine.state.getPosition();
             Vector2 ballPosInPixels = new Vector2(metresToPixels( ballPosInMetres.x, true),
                     metresToPixels(ballPosInMetres.y, false));
             renderer.line(ballPosInPixels.x, ballPosInPixels.y, mouseShootEnd.x,
@@ -140,6 +155,8 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
         shootingLine.end();
     }
 
+
+    //translates pixels to metres
     private float pixelsToMetres(float x, boolean forWidth) {
         if (forWidth) {
             return (x - Boot.INSTANCE.getScreenWidth() / 2 + dragDelta.x) * metreToPixelCoeff;
@@ -149,6 +166,7 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
 
     }
 
+    //translates metres to pixels
     private float metresToPixels(float x, boolean forWidth) {
         if (forWidth) {
 
@@ -166,8 +184,7 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
 
     @Override
     public boolean keyTyped(char character) {
-        // TODO Auto-generated method stub
-        
+        //restart game when press enter
         if(character == '\n' || character == '\r') {
             engine.initGame();
         }
@@ -176,7 +193,7 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
 
     @Override
     public boolean keyUp(int keycode) {
-    
+        // TODO Auto-generated method stub
         return false;
     }
 
@@ -188,7 +205,7 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
 
     @Override
     public boolean scrolled(float amountX, float amountY) {
-        
+        //changes the metreToPixelCoeff when scrolling, which creates a zoom effect
         if (amountY < 0) {
             metreToPixelCoeff = metreToPixelCoeff / 1.4f;
         } else {
@@ -197,10 +214,12 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
         return false;
     }
 
+    //
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         if (button == 0) {
             // left click
+            // start shooting mechanic
             if (engine.getBallIsStopped()) {
                 mouseShootStart = new Vector2(screenX, screenY);
                 mouseShootEnd = new Vector2(screenX, screenY);
@@ -208,6 +227,8 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
             }
         }
         if (button == 1) {
+            //right click
+            //start map drag mechanic
             isDragging = true;
             dragStart = new Vector2(screenX, screenY);
             oldDragDelta = new Vector2(dragDelta.x, dragDelta.y);
@@ -219,11 +240,13 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
     public boolean touchDragged(int screenX, int screenY, int pointer) {
     
         if (isShooting) {
+            //if is shooting set the line position to mousepos
             mouseShootEnd.x = screenX;
             mouseShootEnd.y = screenY;
         }
-        if (isDragging) {
 
+        if (isDragging) {
+            //math to drag the map
             dragDelta.x = oldDragDelta.x - (screenX - dragStart.x);
             dragDelta.y = oldDragDelta.y + (screenY - dragStart.y);
         }
@@ -234,6 +257,7 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         if (button == 0) {
             // left click
+            //shoots the ball
             if (isShooting) {
                 isShooting = false;
                 mouseShootEnd.x = screenX;

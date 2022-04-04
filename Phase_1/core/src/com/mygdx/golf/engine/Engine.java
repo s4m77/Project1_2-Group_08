@@ -9,50 +9,70 @@ import com.mygdx.golf.engine.solvers.Solver;
 
 public class Engine {
 
+
+    //physics variables
     private Function heightFunction;
     private final float GRAVITY = 9.81f;
     private float grassKinetic;
     private float grassStatic;
-    private final float dt = 0.2f;
-    private Solver solver;
-    private boolean ballIsStopped = true;
-    public FileInputManager inputManager;
-    private int numberOfShots = 0;
     private Vector2 targetPosition;
     private float targetRadius;
     public final float BALL_RADIUS = 0.1f;
-    public boolean gameIsFinished;
+    private final float dt = 0.2f;
 
+    public FileInputManager inputManager;
+
+    private Solver solver;
+
+    //stores the state of the ball
+    public State state;
+
+    //game logic variables
+    private int numberOfShots = 0;
+    public boolean gameIsFinished;
+    private boolean ballIsStopped = true;
+
+
+    //Constructor for engine class, sets all the variables and starts the game
     public Engine(Solver solver, boolean useInitialVelocity) {
+
         solver.setEngine(this);
         this.solver = solver;
-        this.inputManager = new FileInputManager();
 
+        this.inputManager = new FileInputManager();
         this.heightFunction = new Function("h(x,y) =" + inputManager.getHeightProfile());
         this.grassKinetic =  inputManager.grassKinetic();
         this.grassStatic = inputManager.grassStatic();
         this.targetPosition = inputManager.getTargetPos();
         this.targetRadius = inputManager.getRadius();
 
+        state = new State();
+
+        
         initGame();
+
         if (useInitialVelocity) {
+            //shoots the ball automatically if useInitialVelocity is true
             newShot(inputManager.getInitialVelocity());
 
         }
 
     }
 
+    //resets the game 
     public void initGame() {
-        State.setPosition(inputManager.getInitialPos());
+        state.setPosition(inputManager.getInitialPos());
         numberOfShots = 0;
         gameIsFinished = false;
         
     }
 
+
+    //method that gets called every frame, it updates the ball position and also checks if user scored using the scored method
     public void update() {
         if (!ballIsStopped) {
-            State.setPosition(solver.solvePos(State.getPosition(), State.getVelocity()));
-            State.setVelocity(solver.solveVel(State.getPosition(), State.getVelocity()));
+            state.setPosition(solver.solvePos(state.getPosition(), state.getVelocity()));
+            state.setVelocity(solver.solveVel(state.getPosition(), state.getVelocity()));
             if(scored()) {
                 stopBall();
                 gameIsFinished = true;
@@ -64,8 +84,9 @@ public class Engine {
         return ballIsStopped;
     }
 
+    //checks if ball has collision with hole
     public boolean scored(){
-        Vector2 ballPos = State.getPosition();
+        Vector2 ballPos = state.getPosition();
 
         double xDiff = ballPos.x - targetPosition.x;
         double yDiff = ballPos.y - targetPosition.y;
@@ -75,39 +96,35 @@ public class Engine {
         return distance < (BALL_RADIUS + targetRadius);
     }
 
+    //stops the ball, and increments the number of shots
     public void stopBall() {
         numberOfShots++;
         ballIsStopped = true;
     }
 
+    //Shoots a new shot, only if the ball is in a stopped position
     public void newShot(Vector2 velocity) {
         if (ballIsStopped) {
             ballIsStopped = false;
-            State.setVelocity(velocity);
+            state.setVelocity(velocity);
         }
     }
 
+    //methods that calculates the height of the map for a given x and y
     public float calculateHeight(float x, float y) {
-
         return (float) heightFunction.calculate(x, y);
     }
 
+    //Calculates the partial derivative for the map at a given position
     public Vector2 calcPartialDerivative(Vector2 position) {
-        // implement here calculation of partial derivative according to courseprofile
-        // so derivativecalculator will return the partial derivative of a function
-        // calcPartialDerivative needs to be called again every time there is a new x or
-        // y position
         Vector2 partials = new Vector2();
-
-        partials.x = (float) Derivation.derivativeX(heightFunction, (double) position.x, (double) position.y); // example
-        partials.y = (float) Derivation.derivativeY(heightFunction, (double) position.x, (double) position.y); // example
+        partials.x = (float) Derivation.derivativeX(heightFunction, (double) position.x, (double) position.y); 
+        partials.y = (float) Derivation.derivativeY(heightFunction, (double) position.x, (double) position.y); 
 
         return partials;
     }
-
+    // Calculates acceleration with the formula from the project manual
     public Vector2 calcAcceleration(Vector2 position, Vector2 velocity) {
-        // using previous speeds and the constant Mk and g and the partial derivative,
-        // calculate the new acceleration, so currentAx and currentAy
         Vector2 partials = calcPartialDerivative(position);
         Vector2 acceleration = new Vector2();
 
@@ -121,10 +138,9 @@ public class Engine {
         return acceleration;
     }
 
+
+    //read the first paragraph of the project manual page 9
     public Vector2 calcSlidingAcceleration(Vector2 position, Vector2 velocity) {
-        // using previous speeds and the constant Mk and g and the partial derivative,
-        // calculate the new acceleration, so currentAx and currentAy
-        // should the second term be negative or positive?
         Vector2 partials = calcPartialDerivative(position);
         Vector2 acceleration = new Vector2();
         acceleration.x = (-1 * GRAVITY * partials.x)
