@@ -3,6 +3,8 @@ package com.mygdx.golf.engine.solvers;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.golf.engine.Engine;
 
+
+//Exactly how the project manual describes the Euler method
 public class Euler implements Solver {
     Engine engine;
 
@@ -27,14 +29,18 @@ public class Euler implements Solver {
         float epsilon = 0.1f;
         if(velocity.x < epsilon && velocity.x > -epsilon && velocity.y < epsilon && velocity.y > -epsilon  ) {
             //if ball stopped moving
+            //we use epsilon because float is never perfectly equal to zero
+
             if(engine.getGrassStatic() > Math.sqrt(partials.x * partials.x + partials.y *
             partials.y)) {
-
+                //if the grass static friction is stronger than the force of gravity with the slope
                 engine.stopBall();
                 return new Vector2(0,0);
+            }else {
+
+                acceleration = engine.calcSlidingAcceleration(position, velocity);
             }
             
-            acceleration = engine.calcSlidingAcceleration(position, velocity);
 
             
         }
