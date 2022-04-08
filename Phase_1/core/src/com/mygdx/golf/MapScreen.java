@@ -81,12 +81,6 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
                 metresToPixels(engine.state.getPosition().y, false),
                 engine.BALL_RADIUS / metreToPixelCoeff);
 
-        //draws golf ball
-       shapeRenderer.setColor(255, 255, 255, 1);
-       shapeRenderer.circle(metresToPixels(engine.state.getPosition().x, true),
-               metresToPixels(engine.state.getPosition().y+10, false),
-               engine.BALL_RADIUS / metreToPixelCoeff);
-
         //draws the hole
         shapeRenderer.setColor(0, 0, 0, 1);
         shapeRenderer.circle(metresToPixels(engine.getTargetPosition().x, true),
