@@ -38,6 +38,7 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
     private Vector2 mouseShootEnd;
     private boolean isShooting;
 
+
     // Initializes everything
     public MapScreen(OrthographicCamera camera, Engine engine) {
         this.camera = camera;
@@ -66,7 +67,7 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 
         //if game is finished than only show end screen
-        if(engine.gameIsFinished) {
+        if(engine.gameIsFinished || engine.inWater) {
             renderEndScreen();
             return;
         }
@@ -79,6 +80,14 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
         shapeRenderer.circle(metresToPixels(engine.state.getPosition().x, true),
                 metresToPixels(engine.state.getPosition().y, false),
                 engine.BALL_RADIUS / metreToPixelCoeff);
+
+       //draws golf ball
+       shapeRenderer.setColor(255, 255, 255, 1);
+        shapeRenderer.circle(metresToPixels(engine.state.getPosition().x+10, true),
+                metresToPixels(engine.state.getPosition().y+10, false),
+                engine.BALL_RADIUS / metreToPixelCoeff);
+
+        
 
 
         //draws the hole
@@ -118,11 +127,15 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
 
                 float n = engine.calculateHeight(x, y);
 
-                if (n > 10 || n < -10) {
-                    continue;
-                }
                 //I found  n / 10 + 0.4f, was a good shade of green for any height function
                 shapeRenderer.setColor(0, n / 10 + 0.4f, 0, 1);
+
+                if (n < 0) {
+                    shapeRenderer.setColor(0, n / 10 + 0.4f, 255, 1);
+                }
+
+                //shapeRenderer.setColor(0, 0, 255, 1);
+                //shapeRenderer.setColor(0, n / 10 + 0.4f, 255, 1);
 
                 shapeRenderer.rect(i, j, p, p);
 
@@ -139,8 +152,6 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
         font.draw(batch, "Press enter to restart", Boot.INSTANCE.getScreenWidth() / 2 - 90, Boot.INSTANCE.getScreenHeight() / 2 );
         batch.end();
     }
-
-
 
     private void renderShootingLine(ShapeRenderer renderer) {
         shootingLine.begin(ShapeRenderer.ShapeType.Line);
@@ -273,5 +284,4 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
         }
         return false;
     }
-
 }
