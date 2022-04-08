@@ -4,6 +4,7 @@ import org.mariuszgromada.math.mxparser.Function;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.golf.Derivation;
 import com.mygdx.golf.FileInputManager;
+import com.mygdx.golf.MapScreen;
 import com.mygdx.golf.State;
 import com.mygdx.golf.engine.solvers.Solver;
 
@@ -31,6 +32,8 @@ public class Engine {
     private int numberOfShots = 0;
     public boolean gameIsFinished;
     private boolean ballIsStopped = true;
+
+    public boolean inWater;
 
 
     //Constructor for engine class, sets all the variables and starts the game
@@ -77,6 +80,10 @@ public class Engine {
                 stopBall();
                 gameIsFinished = true;
             }
+        }
+        if(this.calculateHeight(state.getPosition().x, state.getPosition().y)<0){
+            stopBall();
+            inWater= true;
         }
     }
 
