@@ -1,5 +1,5 @@
 package com.mygdx.golf;
-//test
+
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -7,7 +7,7 @@ import com.mygdx.golf.engine.Engine;
 import com.mygdx.golf.engine.solvers.Euler;
 
 public class Boot extends Game {
-	
+
     public static Boot INSTANCE;
     public int screenWidth, screenHeight;
     private OrthographicCamera orthographicCamera;
