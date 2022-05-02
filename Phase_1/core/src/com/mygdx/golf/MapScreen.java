@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.mygdx.golf.bot.RuleBasedBot;
 import com.mygdx.golf.engine.Engine;
 
 public class MapScreen extends ScreenAdapter implements InputProcessor {
@@ -121,9 +122,9 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
                 //I found  n / 10 + 0.4f, was a good shade of green for any height function
                 shapeRenderer.setColor(0, n / 10 + 0.4f, 0, 1);
 
-                if (n < 0) {
-                    shapeRenderer.setColor(0, n / 10 + 0.4f, 255, 1);
-                }
+                // if (n < 0) {
+                //     shapeRenderer.setColor(0, n / 10 + 0.4f, 255, 1);
+                // }
 
                 //shapeRenderer.setColor(0, 0, 255, 1);
                 //shapeRenderer.setColor(0, n / 10 + 0.4f, 255, 1);
@@ -189,6 +190,13 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
         //restart game when press enter
         if(character == '\n' || character == '\r') {
             engine.initGame();
+        }
+        if(character == 'b'){
+            RuleBasedBot bot = new RuleBasedBot(engine);
+            Vector2 bestMove = bot.hillClimb();
+            // System.out.println(bestMove);
+        //    Vector2 bestMove = new Vector2(1,1);
+            engine.newShot(bestMove);
         }
         return false;
     }
@@ -267,6 +275,8 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
 
                 float velX = (mouseShootStart.x - mouseShootEnd.x) / 50;
                 float velY = -(mouseShootStart.y - mouseShootEnd.y) / 50;
+
+                // System.out.print(velX + " " + velY);
                 engine.newShot(new Vector2(velX, velY));
             }
         }

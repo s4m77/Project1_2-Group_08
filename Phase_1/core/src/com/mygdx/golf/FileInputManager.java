@@ -11,7 +11,7 @@ import com.badlogic.gdx.math.Vector2;
 
 public class FileInputManager {
 
-    protected static String filePathInput = "inputs/input_2.txt";
+    protected static String filePathInput = "inputs/input_5.txt";
     protected static String filePathVelocity = "inputs/velocity.txt";
     
     public static int shots;
