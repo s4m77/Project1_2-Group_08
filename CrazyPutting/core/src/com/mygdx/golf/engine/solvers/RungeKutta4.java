@@ -28,18 +28,14 @@ public class RungeKutta4 implements Solver{
         if(velocity.x < epsilon && velocity.x > -epsilon && velocity.y < epsilon && velocity.y > -epsilon  ) {
             //if ball stopped moving
             //we use epsilon because float is never perfectly equal to zero
-
             if(e.getGrassStatic() > Math.sqrt(partials.x * partials.x + partials.y *
             partials.y)) {
                 //if the grass static friction is stronger than the force of gravity with the slope
                 e.stopBall();
                 return new Vector2(0,0);
             }else {
-
                 acceleration = e.calcSlidingAcceleration(position, velocity);
             }
-
-            
         }
 
         Vector2 k1 = new Vector2(e.calcAcceleration(position, velocity)).scl(e.getDt());
@@ -60,12 +56,11 @@ public class RungeKutta4 implements Solver{
     public Vector2 solvePos(Vector2 position, Vector2 velocity) {
         Vector2 newVel = solveVel(position, velocity);
         
-        Vector2 k1 = new Vector2(solveVel(position, velocity)).scl(e.getDt());
+        Vector2 k1 = new Vector2(newVel).scl(e.getDt());
         
         Vector2 pos2 = position.add(k1.scl(0.5f));
         Vector2 k2 = new Vector2(solveVel(pos2, newVel)).scl(e.getDt());
 
-        
         Vector2 pos3 = position.add(k2.scl(0.5f));
         Vector2 k3 = solveVel(pos3, newVel).scl(e.getDt());
 
