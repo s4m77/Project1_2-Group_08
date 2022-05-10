@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.mygdx.golf.bot.Bot;
+import com.mygdx.golf.bot.HillClimbBot;
 import com.mygdx.golf.bot.RandomBot;
 import com.mygdx.golf.bot.RuleBasedBot;
 import com.mygdx.golf.engine.Engine;
@@ -70,8 +71,12 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 
         //if game is finished than only show end screen
-        if(engine.gameIsFinished || engine.inWater) {
+        if(engine.gameIsFinished) {
             renderEndScreen();
+            return;
+        }
+        if(engine.inWater) {
+            renderLoseScreen();
             return;
         }
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
@@ -124,6 +129,17 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
                 //I found  n / 10 + 0.4f, was a good shade of green for any height function
                 shapeRenderer.setColor(0, n / 10 + 0.4f, 0, 1);
 
+                double[] sandPitCoords = engine.sandPitCoords;
+                if(x >= sandPitCoords[0] && x <= sandPitCoords[1] && y >= sandPitCoords[2] && y <= sandPitCoords[3]) {
+                    shapeRenderer.setColor(0.8f + n/20 ,n / 10 + 0.45f,0,0.9f);
+                }
+
+                double[] lakeCoords = engine.lakeCoords;
+
+                if(x >= lakeCoords[0] && x <= lakeCoords[1] && y >= lakeCoords[2] && y <= lakeCoords[3]) {
+                    shapeRenderer.setColor(0, n / 10 + 0.5f, 1, 0.7f);
+                }
+
                 // if (n < 0) {
                 //     shapeRenderer.setColor(0, n / 10 + 0.4f, 255, 1);
                 // }
@@ -144,6 +160,15 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
         String str = "You made it in " + engine.getNumberOfShots() + " shots";
         font.draw(batch, str, Boot.INSTANCE.getScreenWidth() / 2 - 94, Boot.INSTANCE.getScreenHeight() / 2+30);
         font.draw(batch, "Press enter to restart", Boot.INSTANCE.getScreenWidth() / 2 - 90, Boot.INSTANCE.getScreenHeight() / 2 );
+        batch.end();
+    }
+
+    public void renderLoseScreen() {
+        batch.begin();
+        font.getData().setScale(1.5f, 1.5f);
+        String str = "You fell in water...";
+        font.draw(batch, str, Boot.INSTANCE.getScreenWidth() / 2 - 94, Boot.INSTANCE.getScreenHeight() / 2+30);
+        font.draw(batch, "Press enter to restart", Boot.INSTANCE.getScreenWidth() / 2 - 110, Boot.INSTANCE.getScreenHeight() / 2 );
         batch.end();
     }
 
@@ -194,7 +219,7 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
             engine.initGame();
         }
         if(character == 'b'){
-            Bot bot = new RandomBot(engine);
+            Bot bot = new HillClimbBot(engine);
             Vector2 bestMove = bot.findBestMove();
             // System.out.println(bestMove);
         //    Vector2 bestMove = new Vector2(1,1);

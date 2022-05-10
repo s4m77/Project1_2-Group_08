@@ -22,7 +22,9 @@ public class Engine {
     private Vector2 targetPosition;
     private float targetRadius;
     public final float BALL_RADIUS = 0.1f;
-    private final float dt = 0.2f;
+    private final float dt = 0.1f;
+    public double[] sandPitCoords;
+    public double[] lakeCoords;
 
     public FileInputManager inputManager;
 
@@ -50,7 +52,8 @@ public class Engine {
         this.grassStatic = inputManager.grassStatic();
         this.targetPosition = inputManager.getTargetPos();
         this.targetRadius = inputManager.getRadius();
-
+        this.sandPitCoords = inputManager.getSandPitCoords();
+        this.lakeCoords = inputManager.getLakeCoords();
         state = new State();
 
         initGame();
@@ -89,6 +92,7 @@ public class Engine {
         state.setPosition(inputManager.getInitialPos());
         numberOfShots = 0;
         gameIsFinished = false;
+        inWater = false;
 
     }
 
@@ -108,6 +112,11 @@ public class Engine {
                 stopBall();
                 gameIsFinished = true;
             }
+
+            if(inWater(state)) {
+                stopBall();
+                inWater = true;
+            }
         }
 
         // if(this.calculateHeight(state.getPosition().x, state.getPosition().y)<0){
@@ -126,6 +135,9 @@ public class Engine {
             botState.setVelocity(newVelocity);
             if (scored(botState)) {
                 return 0;
+            }
+            if(inWater(botState)) {
+                return Double.MAX_VALUE;
             }
 
         }
@@ -155,6 +167,15 @@ public class Engine {
         double distance = calcDistanceToTarget(state.getPosition());
 
         return distance < (BALL_RADIUS + targetRadius);
+    }
+
+    public boolean inWater(State state) {
+        double x = state.getPosition().x;
+        double y = state.getPosition().y;
+        if(x > lakeCoords[0] && x < lakeCoords[1] && y > lakeCoords[2] && y < lakeCoords[3]) {
+            return true;
+        }
+        return false;
     }
 
     // stops the ball, and increments the number of shots
@@ -191,10 +212,10 @@ public class Engine {
         Vector2 acceleration = new Vector2();
 
         acceleration.x = (-1 * GRAVITY * partials.x)
-                - grassKinetic * GRAVITY
+                - getKinetic(position) * GRAVITY
                         * (velocity.x / ((float) Math.sqrt(velocity.x * velocity.x + velocity.y * velocity.y)));
         acceleration.y = (-1 * GRAVITY * partials.y)
-                - grassKinetic * GRAVITY
+                - getKinetic(position) * GRAVITY
                         * (velocity.y / ((float) Math.sqrt(velocity.x * velocity.x + velocity.y * velocity.y)));
 
         return acceleration;
@@ -206,10 +227,10 @@ public class Engine {
         Vector2 acceleration = new Vector2();
 
         acceleration.x = (-1 * GRAVITY * partials.x)
-                - grassKinetic * GRAVITY
+                - getKinetic(position) * GRAVITY
                         * (velocity.x / ((float) Math.sqrt(velocity.x * velocity.x + velocity.y * velocity.y)));
         acceleration.y = (-1 * GRAVITY * partials.y)
-                - grassKinetic * GRAVITY
+                - getKinetic(position) * GRAVITY
                         * (velocity.y / ((float) Math.sqrt(velocity.x * velocity.x + velocity.y * velocity.y)));
 
         return acceleration;
@@ -220,26 +241,43 @@ public class Engine {
         Vector2 partials = calcPartialDerivative(position);
         Vector2 acceleration = new Vector2();
         acceleration.x = (-1 * GRAVITY * partials.x)
-                + grassKinetic * GRAVITY
+                + getKinetic(position) * GRAVITY
                         * (partials.x / ((float) Math.sqrt(partials.x * partials.x + partials.y * partials.y)));
         acceleration.y = (-1 * GRAVITY * partials.y)
-                + grassKinetic * GRAVITY
+                + getKinetic(position) * GRAVITY
                         * (partials.y / ((float) Math.sqrt(partials.x * partials.x + partials.y * partials.y)));
         return acceleration;
     }
     public Vector2 calcSlidingAcceleration(Vector2 position, Vector2 velocity, Vector2 partials) {
         Vector2 acceleration = new Vector2();
         acceleration.x = (-1 * GRAVITY * partials.x)
-                + grassKinetic * GRAVITY
+                + getKinetic(position) * GRAVITY
                         * (partials.x / ((float) Math.sqrt(partials.x * partials.x + partials.y * partials.y)));
         acceleration.y = (-1 * GRAVITY * partials.y)
-                + grassKinetic * GRAVITY
+                + getKinetic(position) * GRAVITY
                         * (partials.y / ((float) Math.sqrt(partials.x * partials.x + partials.y * partials.y)));
         return acceleration;
     }
 
     public float getDt() {
         return dt;
+    }
+
+    public float getStatic(Vector2 position) {
+        double x = position.x;
+        double y = position.y;
+        if(x > sandPitCoords[0] && x < sandPitCoords[1] && y > sandPitCoords[2] && y < sandPitCoords[3]) {
+            return inputManager.sandStatic();
+        }
+        return grassStatic;
+    }
+    public float getKinetic(Vector2 position) {
+        double x = position.x;
+        double y = position.y;
+        if(x > sandPitCoords[0] && x < sandPitCoords[1] && y > sandPitCoords[2] && y < sandPitCoords[3]) {
+            return inputManager.sandKinetic();
+        }
+        return grassKinetic;
     }
 
     public float getGrassStatic() {
