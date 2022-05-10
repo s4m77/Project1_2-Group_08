@@ -11,6 +11,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.mygdx.golf.bot.Bot;
+import com.mygdx.golf.bot.RandomBot;
 import com.mygdx.golf.bot.RuleBasedBot;
 import com.mygdx.golf.engine.Engine;
 
@@ -192,8 +194,8 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
             engine.initGame();
         }
         if(character == 'b'){
-            RuleBasedBot bot = new RuleBasedBot(engine);
-            Vector2 bestMove = bot.hillClimb();
+            Bot bot = new RandomBot(engine);
+            Vector2 bestMove = bot.findBestMove();
             // System.out.println(bestMove);
         //    Vector2 bestMove = new Vector2(1,1);
             engine.newShot(bestMove);
