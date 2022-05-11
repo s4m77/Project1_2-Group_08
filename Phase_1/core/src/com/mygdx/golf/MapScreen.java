@@ -75,10 +75,6 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
             renderEndScreen();
             return;
         }
-        if(engine.inWater) {
-            renderLoseScreen();
-            return;
-        }
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         
        renderMap();
@@ -163,14 +159,14 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
         batch.end();
     }
 
-    public void renderLoseScreen() {
+   /* public void renderLoseScreen() {
         batch.begin();
         font.getData().setScale(1.5f, 1.5f);
         String str = "You fell in water...";
         font.draw(batch, str, Boot.INSTANCE.getScreenWidth() / 2 - 94, Boot.INSTANCE.getScreenHeight() / 2+30);
         font.draw(batch, "Press enter to restart", Boot.INSTANCE.getScreenWidth() / 2 - 110, Boot.INSTANCE.getScreenHeight() / 2 );
         batch.end();
-    }
+    }*/
 
     private void renderShootingLine(ShapeRenderer renderer) {
         shootingLine.begin(ShapeRenderer.ShapeType.Line);

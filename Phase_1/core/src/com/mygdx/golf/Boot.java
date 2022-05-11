@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.mygdx.golf.engine.Engine;
 import com.mygdx.golf.engine.solvers.Euler;
+import com.mygdx.golf.engine.solvers.RungeKutta2;
 
 public class Boot extends Game {
 	

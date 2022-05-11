@@ -37,7 +37,7 @@ public class Engine {
     private int numberOfShots = 0;
     public boolean gameIsFinished;
     private boolean ballIsStopped = true;
-
+    private Vector2 savedPos;
     public boolean inWater;
 
     // Constructor for engine class, sets all the variables and starts the game
@@ -115,14 +115,12 @@ public class Engine {
 
             if(inWater(state)) {
                 stopBall();
+                state.setPosition(savedPos); //put ball back to its previous position
                 inWater = true;
             }
+        }else{
+            savedPos= state.getPosition();
         }
-
-        // if(this.calculateHeight(state.getPosition().x, state.getPosition().y)<0){
-        // stopBall();
-        // inWater= true;
-        // }
     }
 
     // STILL A DRAFT
