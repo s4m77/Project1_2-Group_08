@@ -37,7 +37,7 @@ public class RungeKutta2 implements Solver {
         if(velocity.x < epsilon && velocity.x > -epsilon && velocity.y < epsilon && velocity.y > -epsilon  ) {
             //if ball stopped moving
             //we use epsilon because float is never perfectly equal to zero
-            if(engine.getGrassStatic() > Math.sqrt(partials.x * partials.x + partials.y *
+            if(engine.getStatic(position) > Math.sqrt(partials.x * partials.x + partials.y *
             partials.y)) {
                 //if the grass static friction is stronger than the force of gravity with the slope
                 engine.stopBall();
