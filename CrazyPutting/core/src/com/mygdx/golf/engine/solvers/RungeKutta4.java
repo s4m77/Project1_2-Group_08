@@ -18,10 +18,7 @@ public class RungeKutta4 implements Solver{
 
     @Override
     public Vector2 solveVel(Vector2 position, Vector2 velocity) {
-
-
-        
-        Vector2 acceleration = e.calcAcceleration(position,velocity);
+        boolean sliding = false;
         Vector2 partials = e.calcPartialDerivative(position);
         float epsilon = 0.1f;
 
@@ -34,20 +31,25 @@ public class RungeKutta4 implements Solver{
                 e.stopBall();
                 return new Vector2(0,0);
             }else {
-                acceleration = e.calcSlidingAcceleration(position, velocity);
+                sliding = true;
             }
         }
 
-        Vector2 k1 = new Vector2(e.calcAcceleration(position, velocity)).scl(e.getDt());
+        Vector2 a1 = sliding ? e.calcAcceleration(position,velocity) : 
+                                e.calcSlidingAcceleration(position, velocity);
+        Vector2 k1 = new Vector2(a1).scl(e.getDt());
 
-        Vector2 k2 = new Vector2(e.calcAcceleration(position.add(e.getDt()/2,e.getDt()/2),
-                                velocity.add(k1.scl(.5f)))).scl(e.getDt());
+        Vector2 a2 = sliding ? e.calcAcceleration(position.add(e.getDt()/2,e.getDt()/2), velocity.add(k1.scl(.5f))) : 
+                                e.calcSlidingAcceleration(position.add(e.getDt()/2,e.getDt()/2), velocity.add(k1.scl(.5f)));
+        Vector2 k2 = new Vector2(a2).scl(e.getDt());
 
-        Vector2 k3 = new Vector2(e.calcAcceleration(position.add(e.getDt()/2, e.getDt()/2),
-                                velocity.add(k2.scl(.5f)))).scl(e.getDt());
+        Vector2 a3 = sliding ? e.calcAcceleration(position.add(e.getDt()/2, e.getDt()/2), velocity.add(k2.scl(.5f))) : 
+                                e.calcSlidingAcceleration(position.add(e.getDt()/2, e.getDt()/2), velocity.add(k2.scl(.5f)));
+        Vector2 k3 = new Vector2(a3).scl(e.getDt());
 
-        Vector2 k4 = new Vector2(e.calcAcceleration(position.add(e.getDt(), e.getDt()),
-                                velocity.add(k3))).scl(e.getDt());
+        Vector2 a4 = sliding ? e.calcAcceleration(position.add(e.getDt(), e.getDt()), velocity.add(k3)) : 
+                                e.calcSlidingAcceleration(position.add(e.getDt(), e.getDt()), velocity.add(k3));
+        Vector2 k4 = new Vector2(a4).scl(e.getDt());
 
         return velocity.add(k1).add(k2.scl(2)).add(k3.scl(2)).add(k4).scl(1/6);
     }
