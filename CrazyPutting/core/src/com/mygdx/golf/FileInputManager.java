@@ -5,13 +5,14 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Arrays;
 
 import com.badlogic.gdx.math.Vector2;
 
 
 public class FileInputManager {
 
-    protected static String filePathInput = "inputs/input_2.txt";
+    protected static String filePathInput = "inputs/input_4.txt";
     protected static String filePathVelocity = "inputs/velocity.txt";
     
     public static int shots;
@@ -26,6 +27,17 @@ public class FileInputManager {
      * [12]:v0x, [13]:v0y
      */
     protected String[] input;
+    Vector2 initialPos;
+    Vector2 targetPos;
+    float radius;
+    float grassKinetic;
+    float grassStatic;
+    String heightProfile;
+    float sandKinetic;
+    float sandStatic;
+    double[] sandPitCoords;
+    double[] lakeCoords;
+
     /**
      * Constructor for a FileInputManager obj
      */
@@ -42,10 +54,10 @@ public class FileInputManager {
      * @throws IOException if file not found 
      */
     public void readFile() throws IOException {
-        input = new String[14]; 
+        input = new String[16]; 
         read = new BufferedReader(new FileReader(new File(pathInput.getFile())));
 
-        for (int i = 0; i < 12; i++) {
+        for (int i = 0; i < 14; i++) {
             
             String s = read.readLine();
             // System.out.println(s);
@@ -63,7 +75,7 @@ public class FileInputManager {
         }
 
         read = new BufferedReader(new FileReader(new File(pathVelocity.getFile())));
-        for (int i = 12; i < input.length; i++) {
+        for (int i = 14; i < input.length; i++) {
             String s1 = read.readLine();
             char[] c1 = s1.toCharArray();
             for (int j = 0; j < c1.length-1; j++) {
@@ -78,28 +90,44 @@ public class FileInputManager {
             }
         }
         read.close();
+        initialPos = new Vector2(Float.parseFloat(input[0]), Float.parseFloat(input[1]));
+        targetPos = new Vector2(Float.parseFloat(input[2]), Float.parseFloat(input[3]));
+        radius = Float.parseFloat(input[4]);
+        grassKinetic = Float.parseFloat(input[5]);
+        grassStatic = Float.parseFloat(input[6]);
+        heightProfile = input[7];
+        sandKinetic =  Float.parseFloat(input[10]);
+        sandStatic =  Float.parseFloat(input[11]);
+        sandPitCoords = calcSandPitCoords();
+        lakeCoords = calcLakeCoords();
+
     }
     //ACCESSORS
     public String[] getInputArray() {return this.input;}
     public Vector2 getInitialPos() {
-        return new Vector2(Float.parseFloat(input[0]), Float.parseFloat(input[1]));
+        return initialPos;
     }
     public Vector2 getTargetPos() {
-        return new Vector2(Float.parseFloat(input[2]), Float.parseFloat(input[3]));
+        return targetPos;
     }
-    public float getRadius()        {return Float.parseFloat(input[4]);}
-    public float grassKinetic()     {return Float.parseFloat(input[5]);}
-    public float grassStatic()      {return Float.parseFloat(input[6]);}
-    public String getHeightProfile() {return input[7];}
-    public float sandKinetic()      {return Float.parseFloat(input[10]);}
-    public float sandStatic()       {return Float.parseFloat(input[11]);}
-    
+    public float getRadius()        {return radius;}
+    public float grassKinetic()     {return grassKinetic;}
+    public float grassStatic()      {return grassStatic;}
+    public String getHeightProfile() {return heightProfile;}
+    public float sandKinetic()      {return sandKinetic;}
+    public float sandStatic()       {return sandStatic;}
+    public double[] getSandPitCoords() {
+        return sandPitCoords;
+    }
+    public double[] getLakeCoords() {
+        return lakeCoords;
+    }
     /**
      * this method translates an input of, e.g., -1<x<1
      * @return arr[0]: beginning; arr[1] end
      */
-    public double[] sandPitX(){            
-        double[] result = new double[2];
+    private double[] calcSandPitCoords(){            
+        double[] result = new double[4];
         char[] s = input[8].toCharArray();
         for (int i = 0; i < s.length; i++) {
             Character c = s[i];
@@ -109,31 +137,56 @@ public class FileInputManager {
                 String sub2 = build.substring(i+2);
                 result[0] = Double.parseDouble(sub1);
                 result[1] = Double.parseDouble(sub2);
-                return result;
+                
             }
         }
-        return result;
-    }
-    /**
-     * this method translates an input of, e.g., -1<y<1
-     * @return arr[0]: beginning; arr[1] end
-     */
-    public double[] sandPitY(){
-        double[] result = new double[2];
-        char[] s = input[9].toCharArray();
+
+        s = input[9].toCharArray();
         for (int i = 0; i < s.length; i++) {
             Character c = s[i];
             if (c.equals('y')){
                 StringBuilder build = new StringBuilder(input[9]);
                 String sub1 = build.substring(0, i-1);
                 String sub2 = build.substring(i+2);
-                result[0] = Double.parseDouble(sub1);
-                result[1] = Double.parseDouble(sub2);
-                return result;
+                result[2] = Double.parseDouble(sub1);
+                result[3] = Double.parseDouble(sub2);
+               
             }
         }
         return result;
     }
+
+    private double[] calcLakeCoords(){            
+        double[] result = new double[4];
+        char[] s = input[12].toCharArray();
+        for (int i = 0; i < s.length; i++) {
+            Character c = s[i];
+            if (c.equals('x')){
+                StringBuilder build = new StringBuilder(input[12]);
+                String sub1 = build.substring(0, i-1);
+                String sub2 = build.substring(i+2);
+                result[0] = Double.parseDouble(sub1);
+                result[1] = Double.parseDouble(sub2);
+                
+            }
+        }
+
+        s = input[13].toCharArray();
+        for (int i = 0; i < s.length; i++) {
+            Character c = s[i];
+            if (c.equals('y')){
+                StringBuilder build = new StringBuilder(input[13]);
+                String sub1 = build.substring(0, i-1);
+                String sub2 = build.substring(i+2);
+                result[2] = Double.parseDouble(sub1);
+                result[3] = Double.parseDouble(sub2);
+               
+            }
+        }
+        return result;
+    }
+    
+    
     public double getV0x()           {return Double.parseDouble(input[12]);}
     public double getV0y()           {return Double.parseDouble(input[13]);}
     public Vector2 getInitialVelocity() {
@@ -175,10 +228,8 @@ public class FileInputManager {
     }
     public static void main(String[] args) {
         FileInputManager f = new FileInputManager();
-        for (String string : f.getInputArray()) {
-            System.out.println(string);
-        }
-        System.out.println(f.getV0x());
+       
+        System.out.println(Arrays.toString(f.calcLakeCoords()) );
     }
     
 }
