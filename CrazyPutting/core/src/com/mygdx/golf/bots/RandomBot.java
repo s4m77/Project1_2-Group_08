@@ -1,4 +1,4 @@
-package com.mygdx.golf.bots;
+package com.mygdx.golf.bot;
 
 import java.util.Random;
 
