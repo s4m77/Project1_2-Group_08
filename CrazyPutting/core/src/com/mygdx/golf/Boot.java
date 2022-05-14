@@ -9,7 +9,7 @@ import com.mygdx.golf.engine.solvers.RungeKutta2;
 import com.mygdx.golf.engine.solvers.RungeKutta4;
 
 public class Boot extends Game {
-	
+
     public static Boot INSTANCE;
     public int screenWidth, screenHeight;
     private OrthographicCamera orthographicCamera;

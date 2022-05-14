@@ -6,7 +6,7 @@ V_1.0 @17/03/2022
 
 # MEMBERS: Mahshid Archangi, Emmanuel Fernandez, Jeroen Geraats, Sam Goldie, Juan Manuel López-Yanes Redivo, Selma Rimmelzwaan, Alexandra Zamfir
 
-# HOW TO START THIS PROGRAM: 
+# HOW TO START THIS PROGRAM:
 
     *o start the Crazy Putting game, run the file:
 #                                                  DesktopLauncher.java 
