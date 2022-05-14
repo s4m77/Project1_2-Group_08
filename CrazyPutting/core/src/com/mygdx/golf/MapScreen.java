@@ -11,10 +11,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.mygdx.golf.bot.Bot;
-import com.mygdx.golf.bot.HillClimbBot;
-import com.mygdx.golf.bot.RandomBot;
-import com.mygdx.golf.bot.RuleBasedBot;
+import com.mygdx.golf.bots.*;
 import com.mygdx.golf.engine.Engine;
 
 public class MapScreen extends ScreenAdapter implements InputProcessor {
