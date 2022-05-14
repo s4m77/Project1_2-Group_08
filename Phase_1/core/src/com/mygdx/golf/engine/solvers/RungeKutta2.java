@@ -40,7 +40,7 @@ public class RungeKutta2 implements Solver {
             if(engine.getStatic(position) > Math.sqrt(partials.x * partials.x + partials.y *
             partials.y)) {
                 //if the grass static friction is stronger than the force of gravity with the slope
-                engine.stopBall();
+                //engine.stopBall();
                 return new Vector2(0,0);
             }else {
 

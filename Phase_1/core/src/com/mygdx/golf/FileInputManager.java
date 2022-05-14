@@ -12,7 +12,7 @@ import com.badlogic.gdx.math.Vector2;
 
 public class FileInputManager {
 
-    protected static String filePathInput = "inputs/input_4.txt";
+    protected static String filePathInput = "inputs/input_2.txt";
     protected static String filePathVelocity = "inputs/velocity.txt";
     
     public static int shots;
@@ -187,10 +187,10 @@ public class FileInputManager {
     }
     
     
-    public double getV0x()           {return Double.parseDouble(input[12]);}
-    public double getV0y()           {return Double.parseDouble(input[13]);}
+    public double getV0x()           {return Double.parseDouble(input[14]);}
+    public double getV0y()           {return Double.parseDouble(input[15]);}
     public Vector2 getInitialVelocity() {
-        return new Vector2(Float.parseFloat(input[12]), Float.parseFloat(input[13]));
+        return new Vector2(Float.parseFloat(input[14]), Float.parseFloat(input[15]));
 
     }
     /**

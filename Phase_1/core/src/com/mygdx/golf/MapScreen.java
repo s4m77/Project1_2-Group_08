@@ -131,20 +131,11 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
                 }
 
                 double[] lakeCoords = engine.lakeCoords;
-
-                if(x >= lakeCoords[0] && x <= lakeCoords[1] && y >= lakeCoords[2] && y <= lakeCoords[3]) {
+                if(x >= lakeCoords[0] && x <= lakeCoords[1] && y >= lakeCoords[2] && y <= lakeCoords[3] || n<0) {
                     shapeRenderer.setColor(0, n / 10 + 0.5f, 1, 0.7f);
                 }
-
-                // if (n < 0) {
-                //     shapeRenderer.setColor(0, n / 10 + 0.4f, 255, 1);
-                // }
-
-                //shapeRenderer.setColor(0, 0, 255, 1);
-                //shapeRenderer.setColor(0, n / 10 + 0.4f, 255, 1);
-
+                
                 shapeRenderer.rect(i, j, p, p);
-
             }
         }
     }

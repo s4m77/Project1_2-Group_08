@@ -23,7 +23,7 @@ public class Engine {
     private Vector2 targetPosition;
     private float targetRadius;
     public final float BALL_RADIUS = 0.1f;
-    private final float dt = 0.1f;
+    private final float dt = 0.01f;
     public double[] sandPitCoords;
     public double[] lakeCoords;
 
@@ -68,9 +68,30 @@ public class Engine {
     }
 
     public static void main(String[] args) {
-        Engine engine = new Engine(new Euler(), false);
+        final long startTime = System.currentTimeMillis();
+        for(int i=0; i<1000; i++){
+            Engine engine = new Engine(new Euler(), true);
+        }
+        final long endTime = System.currentTimeMillis();
 
-        System.out.println(engine.calculateHeight(1, 1));
+        System.out.println("Total execution time: " + ((endTime - startTime)/1000f));
+
+        final long startTime1 = System.currentTimeMillis();
+        for(int i=0; i<100; i++){
+            Engine engine1 = new Engine(new RungeKutta2(), true);
+        }
+        final long endTime1 = System.currentTimeMillis();
+
+        System.out.println("Total execution time: " + ((endTime1 - startTime1)/1000f));
+
+        
+        //Vector2 newVel= new Vector2(1, 0);
+        //engine.newShot(newVel);
+        //engine.update();
+        
+        //System.out.println(engine.state.getPosition().x);
+
+        /*System.out.println(engine.calculateHeight(1, 1));
         final long startTime = System.currentTimeMillis();
         Random rn = new Random();
         int RANGE = 80;
@@ -84,7 +105,7 @@ public class Engine {
         final long endTime = System.currentTimeMillis();
 
         System.out.println("Total execution time: " + ((endTime - startTime)/RANGE));
-        // System.out.println(distance);
+        // System.out.println(distance);*/
     }
 
 
@@ -171,7 +192,7 @@ public class Engine {
     public boolean inWater(State state) {
         double x = state.getPosition().x;
         double y = state.getPosition().y;
-        if(x > lakeCoords[0] && x < lakeCoords[1] && y > lakeCoords[2] && y < lakeCoords[3]) {
+        if(x > lakeCoords[0] && x < lakeCoords[1] && y > lakeCoords[2] && y < lakeCoords[3] || this.calculateHeight((float)x,(float)y)<0) {
             return true;
         }
         return false;
