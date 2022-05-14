@@ -20,8 +20,8 @@ public class RungeKutta4 implements Solver{
     public Vector2 solveVel(Vector2 position, Vector2 velocity) {
         boolean sliding = false;
         Vector2 partials = e.calcPartialDerivative(position);
+        
         float epsilon = 0.1f;
-
         if(velocity.x < epsilon && velocity.x > -epsilon && velocity.y < epsilon && velocity.y > -epsilon  ) {
             //if ball stopped moving
             //we use epsilon because float is never perfectly equal to zero
