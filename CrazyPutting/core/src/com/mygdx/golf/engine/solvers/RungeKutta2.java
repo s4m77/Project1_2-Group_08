@@ -30,7 +30,7 @@ public class RungeKutta2 implements Solver {
 
     @Override
     public Vector2 solveVel(Vector2 position, Vector2 velocity) {
-        Vector2 acceleration = engine.calcAcceleration(position,velocity);
+        boolean sliding = false;
         Vector2 partials = engine.calcPartialDerivative(position);
         
         float epsilon = 0.1f;
@@ -43,21 +43,21 @@ public class RungeKutta2 implements Solver {
                 engine.stopBall();
                 return new Vector2(0,0);
             }else {
-
-                acceleration = engine.calcSlidingAcceleration(position, velocity);
+                sliding = true;
             }
 
             
         }
-        
+
+        Vector2 acceleration = sliding ? engine.calcSlidingAcceleration(position, velocity) :
+                                         engine.calcAcceleration(position,velocity);
 
         Vector2 ki1= new Vector2(engine.getDt()*acceleration.x, engine.getDt()*acceleration.y);
-
         //calculate Acceleration2
-        Vector2 updatedPosition= new Vector2(position.x + 2.f/3.f * engine.getDt(), position.y + 2.f/3.f * engine.getDt());
-        Vector2 updatedVelocity= new Vector2(velocity.x + 2.f/3.f * ki1.x, velocity.y + 2.f/3.f * ki1.y);
-        Vector2 Acceleration2= engine.calcAcceleration(updatedPosition, updatedVelocity);
-
+        Vector2 updatedPosition = new Vector2(position.x + 2.f/3.f * engine.getDt(), position.y + 2.f/3.f * engine.getDt());
+        Vector2 updatedVelocity = new Vector2(velocity.x + 2.f/3.f * ki1.x, velocity.y + 2.f/3.f * ki1.y);
+        Vector2 Acceleration2 = sliding ? engine.calcSlidingAcceleration(updatedPosition, updatedVelocity) :
+                                         engine.calcAcceleration(updatedPosition, updatedVelocity);
         Vector2 ki2= new Vector2(engine.getDt()*Acceleration2.x, engine.getDt()*Acceleration2.y);
 
         return new Vector2(velocity.x + 1.f/4.f * ki1.x + 3.f/4.f * ki2.x, velocity.y + 1.f/4.f * ki1.y + 3.f/4.f * ki2.y); 
