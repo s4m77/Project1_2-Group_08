@@ -1,5 +1,7 @@
 package com.mygdx.golf.engine.solvers;
 
+import java.nio.file.attribute.PosixFilePermission;
+
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.golf.engine.Engine;
 
@@ -25,53 +27,64 @@ public class RungeKutta4 implements Solver{
             if(e.getStatic(position) > Math.sqrt(partials.x * partials.x + partials.y *
             partials.y)) {
                 //if the grass static friction is stronger than the force of gravity with the slope
-                //e.stopBall();
+                e.stopBall();
                 return new Vector2(0,0);
             }else {
                 sliding = true;
             }
         }
+        
+        //k1
+        Vector2 acc1 = sliding ? new Vector2(e.calcSlidingAcceleration(position, velocity)) : new Vector2(e.calcAcceleration(position, velocity));
+        Vector2 k1 = new Vector2(acc1.x*e.getDt(), acc1.y*e.getDt());
+        
+        //k2
+        Vector2 pos2 = new Vector2(position.x + e.getDt()*(1.f/3.f), position.y + e.getDt()*(1.f/3.f));
+        Vector2 vel2 = new Vector2(velocity.x + k1.x*(1.f/3.f), velocity.y + k1.y*(1.f/3.f));
+        Vector2 acc2 = sliding ? new Vector2(e.calcSlidingAcceleration(pos2, vel2)) : new Vector2(e.calcAcceleration(pos2, vel2));
+        Vector2 k2 = new Vector2(acc2.x*e.getDt(), acc2.y*e.getDt());
+        
+        //k3
+        Vector2 pos3 = new Vector2(position.x + e.getDt()*(2.f/3.f), position.y + e.getDt()*(2.f/3.f));
+        Vector2 vel3 = new Vector2(velocity.x - k1.x*(1.f/3.f) + k2.x,velocity.y - k1.y*(1.f/3.f) + k2.y);
+        Vector2 acc3 = sliding ? new Vector2(e.calcSlidingAcceleration(pos3, vel3)) : new Vector2(e.calcAcceleration(pos3, vel3));
+        Vector2 k3 = new Vector2(acc3.x*e.getDt(), acc3.y*e.getDt());
+        
+        //k4
+        Vector2 pos4 = new Vector2(position.x + e.getDt(), position.y + e.getDt());
+        Vector2 vel4 = new Vector2(velocity.x + k1.x - k2.x + k3.x, velocity.y + k1.y - k2.y + k3.y);
+        Vector2 acc4 = sliding ? new Vector2(e.calcSlidingAcceleration(pos4, vel4)) : new Vector2(e.calcAcceleration(pos4, vel4));
+        Vector2 k4 = new Vector2(acc4.x*e.getDt(), acc4.y*e.getDt());
 
-        Vector2 a1 = sliding ? new Vector2(e.calcAcceleration(position, velocity)) : new Vector2(e.calcSlidingAcceleration(position, velocity));
-        Vector2 k1 = a1.scl(e.getDt());
-
-        Vector2 p2 = new Vector2(position).add(e.getDt()/2f, e.getDt()/2f);
-        Vector2 v2 = new Vector2(velocity).add(k1.scl(0.5f));
-        Vector2 a2 = sliding ? new Vector2(e.calcAcceleration(p2, v2)) : new Vector2(e.calcSlidingAcceleration(p2, v2));
-        Vector2 k2 = a2.scl(e.getDt());
-
-        //p3 == p2
-        Vector2 v3 = new Vector2(velocity).add(k2.scl(0.5f));
-        Vector2 a3 = sliding ? new Vector2(e.calcAcceleration(p2, v3)) : new Vector2(e.calcSlidingAcceleration(p2, v3));
-        Vector2 k3 = a3.scl(e.getDt());
-
-        Vector2 p4 = new Vector2(position).add(e.getDt(), e.getDt());
-        Vector2 v4 = new Vector2(velocity).add(k3);
-        Vector2 a4 = sliding ? new Vector2(e.calcAcceleration(p4, v4)) : new Vector2(e.calcSlidingAcceleration(p4, v4));
-        Vector2 k4 = a4.scl(e.getDt());
-
-        k2.scl(2f); k3.scl(2f);
-        Vector2 sum = k1.add(k2).add(k3).add(k4);
-        return new Vector2(velocity.add(sum.scl(1f/6f)));
+        return new Vector2(velocity.x + (1.f/8.f)*(k1.x + (3*k2.x) + (3*k3.x) + k4.x),
+                            velocity.y + (1.f/8.f)*(k1.y + (3*k2.y) + (3*k3.y) + k4.y));
     }
 
     @Override
     public Vector2 solvePos(Vector2 position, Vector2 velocity) {
-        Vector2 newVel = solveVel(position, velocity);
+        //k1
+        Vector2 fun1 =solveVel(position, velocity);
+        Vector2 k1 = new Vector2(fun1.x*e.getDt(), fun1.y*e.getDt());
         
-        Vector2 k1 = new Vector2(newVel).scl(e.getDt());
+        //k2
+        Vector2 pos2 = new Vector2(position.x + e.getDt()*(1.f/3.f), position.y + e.getDt()*(1.f/3.f));
+        Vector2 vel2 = new Vector2(velocity.x + k1.x*(1.f/3.f), velocity.y + k1.y*(1.f/3.f));
+        Vector2 fun2 = solveVel(pos2, vel2);
+        Vector2 k2 = new Vector2(fun2.x*e.getDt(), fun2.y*e.getDt());
         
-        Vector2 pos2 = new Vector2(position).add(k1.scl(0.5f));
-        Vector2 k2 = new Vector2(solveVel(pos2, newVel)).scl(e.getDt());
+        //k3
+        Vector2 pos3 = new Vector2(position.x + e.getDt()*(2.f/3.f), position.y + e.getDt()*(2.f/3.f));
+        Vector2 vel3 = new Vector2(velocity.x - k1.x*(1.f/3.f)+k2.x, velocity.y - k1.y*(1.f/3.f)+k2.y);
+        Vector2 fun3 = solveVel(pos3, vel3);
+        Vector2 k3 = new Vector2(fun3.x*e.getDt(), fun3.y*e.getDt());
+        
+        //k4
+        Vector2 pos4 = new Vector2(position.x + e.getDt(), position.y + e.getDt());
+        Vector2 vel4 = new Vector2(velocity.x + k1.x - k2.x + k3.x, velocity.y + k1.y - k2.y + k3.y);
+        Vector2 fun4 = solveVel(pos4, vel4);
+        Vector2 k4 = new Vector2(fun4.x*e.getDt(), fun4.y*e.getDt());
 
-        Vector2 pos3 = new Vector2(position).add(k2.scl(0.5f));
-        Vector2 k3 = new Vector2(solveVel(pos3, newVel)).scl(e.getDt());
-
-        Vector2 pos4 = new Vector2(position).add(k3);
-        Vector2 k4 = new Vector2(solveVel(pos4, newVel)).scl(e.getDt());
-
-        k2.scl(2f); k3.scl(2f);
-        Vector2 sum = k1.add(k2).add(k3).add(k4);
-        return new Vector2(position.add(sum.scl(1f/6f)));
+        return new Vector2(position.x + 1f/8f*(k1.x + (3*k2.x) + (3*k3.x) + k4.x), 
+                            position.y + 1f/8f*(k1.y + (3*k2.y) + (3*k3.y) + k4.y));
     }
 }

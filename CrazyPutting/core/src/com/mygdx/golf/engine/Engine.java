@@ -9,9 +9,7 @@ import com.mygdx.golf.Derivation;
 import com.mygdx.golf.FileInputManager;
 import com.mygdx.golf.MapScreen;
 import com.mygdx.golf.State;
-import com.mygdx.golf.engine.solvers.Euler;
-import com.mygdx.golf.engine.solvers.RungeKutta2;
-import com.mygdx.golf.engine.solvers.Solver;
+import com.mygdx.golf.engine.solvers.*;
 
 public class Engine {
 
@@ -78,11 +76,11 @@ public class Engine {
 
         final long startTime1 = System.currentTimeMillis();
         for(int i=0; i<100; i++){
-            Engine engine1 = new Engine(new RungeKutta2(), true);
+            Engine engine1 = new Engine(new RungeKutta4(), true);
         }
         final long endTime1 = System.currentTimeMillis();
 
-        System.out.println("Total execution time: " + ((endTime1 - startTime1)/1000f));
+        System.out.println("Total execution time rk4: " + ((endTime1 - startTime1)));
 
         
         //Vector2 newVel= new Vector2(1, 0);
