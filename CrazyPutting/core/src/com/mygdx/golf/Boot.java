@@ -4,9 +4,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.mygdx.golf.engine.Engine;
-import com.mygdx.golf.engine.solvers.Euler;
-import com.mygdx.golf.engine.solvers.RungeKutta2;
-import com.mygdx.golf.engine.solvers.RungeKutta4;
+import com.mygdx.golf.engine.solvers.*;
 
 public class Boot extends Game {
 
@@ -29,7 +27,7 @@ public class Boot extends Game {
         this.orthographicCamera.setToOrtho(false, screenWidth,screenHeight);
 
         //creates the engine with the selected solver 
-        Engine engine = new Engine(new Euler(), true);
+        Engine engine = new Engine(new RungeKutta4_1(), true);
         //creates the GUI with the camera and engine
         MapScreen mapScreen = new MapScreen(orthographicCamera, engine);
         Gdx.input.setInputProcessor(mapScreen);
