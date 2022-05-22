@@ -25,7 +25,6 @@ public class HillClimbBot implements Bot {
             boolean localMaximum = false;
             while(!localMaximum) {
 
-                System.out.println("loop");
                 localMaximum = true;
 
                 outer : for(float x = -range; x <= range; x += increment) {
@@ -35,11 +34,8 @@ public class HillClimbBot implements Bot {
                         Vector2 shootingVelocity = new Vector2(bestShot.x + x, bestShot.y + y); 
                         botState.setVelocity(shootingVelocity);
                         double distance = engine.simulateShot(botState);
-                        // System.out.println(distance);
                         if(distance < minDistance) {
-                            // System.out.println("min distance: " +minDistance);
-                            // System.out.println("distance: " +distance);
-                            // System.out.println("best shot: " +shootingVelocity);
+                        
     
                             System.out.println(distance < minDistance);
                             minDistance = distance;
@@ -56,7 +52,6 @@ public class HillClimbBot implements Bot {
         
       
         System.out.println("best returned shot: " +bestShot);
-        System.out.println("best returned distance: " +minDistance);
 
         return bestShot;
     }

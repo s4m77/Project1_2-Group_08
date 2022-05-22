@@ -11,7 +11,11 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.mygdx.golf.bots.*;
+import com.mygdx.golf.bots.Bot;
+import com.mygdx.golf.bots.HillClimbBot;
+import com.mygdx.golf.bots.RandomBot;
+import com.mygdx.golf.bots.RuleBasedBot;
+import com.mygdx.golf.bots.BruteForceBot;
 import com.mygdx.golf.engine.Engine;
 
 public class MapScreen extends ScreenAdapter implements InputProcessor {
@@ -128,11 +132,20 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
                 }
 
                 double[] lakeCoords = engine.lakeCoords;
-                if(x >= lakeCoords[0] && x <= lakeCoords[1] && y >= lakeCoords[2] && y <= lakeCoords[3] || n<0) {
+
+                if(x >= lakeCoords[0] && x <= lakeCoords[1] && y >= lakeCoords[2] && y <= lakeCoords[3] || (engine.USE_NEGATIVE_LAKES && n < 0)) {
                     shapeRenderer.setColor(0, n / 10 + 0.5f, 1, 0.7f);
                 }
-                
+
+                // if (n < 0) {
+                //     shapeRenderer.setColor(0, n / 10 + 0.4f, 255, 1);
+                // }
+
+                //shapeRenderer.setColor(0, 0, 255, 1);
+                //shapeRenderer.setColor(0, n / 10 + 0.4f, 255, 1);
+
                 shapeRenderer.rect(i, j, p, p);
+
             }
         }
     }

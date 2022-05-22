@@ -1,42 +1,26 @@
 package com.mygdx.golf.bots;
 
-
-import com.badlogic.gdx.math.Vector;
 import com.badlogic.gdx.math.Vector2;
-import com.mygdx.golf.State;
 import com.mygdx.golf.engine.Engine;
 
-public class RuleBasedBot {
+public class RuleBasedBot implements Bot {
     private Engine engine;
 
     public RuleBasedBot(Engine engine) {
         this.engine = engine;
     }
-
-
+    @Override
     public Vector2 findBestMove() {
-        // State state = new State();
-        double minDistance = Double.MAX_VALUE;
-        Vector2 bestShot = new Vector2();
-        for(float x = -5; x < 5; x += 1) {
-            for (float y = -5; y < 5; y += 1) {
-                State botState = new State();
-                botState.setPosition(engine.state.getPosition());  
-                Vector2 shootingVelocity = new Vector2(x,y); 
-                botState.setVelocity(shootingVelocity);
+        Vector2 position = engine.state.getPosition();
+        Vector2 target = engine.targetPosition;
+        float distance = (float) engine.calcDistanceToTarget(position);
+        float x = target.x - position.x  ;
+        float y = target.y - position.y  ;
 
-                double distance = engine.simulateShot(botState);
-                // System.out.println(distance);
-                if(distance < minDistance) {
-                    minDistance = distance;
-                    System.out.println(distance);
-                    bestShot = shootingVelocity;
-                }
-
-            }   
+        if(distance < 4) {
+            x = 2*x;
+            y = 2*y;
         }
-
-
-        return bestShot;
+        return new Vector2(x,y);
     }
 }
