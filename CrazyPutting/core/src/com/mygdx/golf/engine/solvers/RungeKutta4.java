@@ -5,9 +5,9 @@ import com.mygdx.golf.engine.Engine;
 /**
  * This implementation of the Runge-Kutta 4 method uses the 
  * fourth-order Runge-Kutta method with final expression:
- * w' = w + 1/8(k1 + 3k2 + 3k3 + k4)
- * Local error = O(h^5)
- * Global error = O(h^4)
+ * w' = w + h/8(k1 + 3k2 + 3k3 + k4)
+ * Local error = O(h^4)
+ * Global error = O(h^5)
  */
 public class RungeKutta4 implements Solver{
 

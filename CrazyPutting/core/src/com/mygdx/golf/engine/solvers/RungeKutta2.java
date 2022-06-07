@@ -3,7 +3,14 @@ package com.mygdx.golf.engine.solvers;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.golf.engine.Engine;
 
-
+/**
+ * This implementation of the Runge-Kutta 2 method uses the 
+ * classical second-order Runge-Kutta method.
+ * Therefore, it uses as final expression for solving:
+ * w' = w + h/4(k1 + 3k2)
+ * Local error = O(h^3)
+ * Global error = O(h^4)
+ */
 public class RungeKutta2 implements Solver {
     Engine engine;
 
