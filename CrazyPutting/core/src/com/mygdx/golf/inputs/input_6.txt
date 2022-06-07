@@ -1,0 +1,14 @@
+x0 = -3
+y0 = 0
+xt = 4
+yt = 1
+r = 0.05
+muk = 0.08
+mus = 0.2
+heightProfile = (1/2)*sin((x+y)/10)+1
+sandPitX = 1<x<5
+sandPitY = 1<y<2
+muks = 0.25
+muss = 0.3
+lakeX = 0<x<0
+lakeY = 1<y<2

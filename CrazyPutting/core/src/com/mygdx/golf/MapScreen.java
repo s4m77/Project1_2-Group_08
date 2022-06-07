@@ -127,15 +127,20 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
                 shapeRenderer.setColor(0, n / 10 + 0.4f, 0, 1);
 
                 double[] sandPitCoords = engine.sandPitCoords;
-                if(x >= sandPitCoords[0] && x <= sandPitCoords[1] && y >= sandPitCoords[2] && y <= sandPitCoords[3]) {
-                    shapeRenderer.setColor(0.8f + n/20 ,n / 10 + 0.45f,0,0.9f);
+                if(sandPitCoords[0] - sandPitCoords[1] != 0 && sandPitCoords[2] - sandPitCoords[3] != 0 ) {
+
+                    if(x >= sandPitCoords[0] && x <= sandPitCoords[1] && y >= sandPitCoords[2] && y <= sandPitCoords[3]) {
+                        shapeRenderer.setColor(0.8f + n/20 ,n / 10 + 0.45f,0,0.9f);
+                    }
                 }
 
                 double[] lakeCoords = engine.lakeCoords;
+                if(lakeCoords[0] - lakeCoords[1] != 0 && lakeCoords[2] - lakeCoords[3] != 0 ) {
 
                 if(x >= lakeCoords[0] && x <= lakeCoords[1] && y >= lakeCoords[2] && y <= lakeCoords[3] || (engine.USE_NEGATIVE_LAKES && n < 0)) {
                     shapeRenderer.setColor(0, n / 10 + 0.5f, 1, 0.7f);
                 }
+            }
 
                 // if (n < 0) {
                 //     shapeRenderer.setColor(0, n / 10 + 0.4f, 255, 1);
@@ -216,8 +221,15 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
             engine.initGame();
         }
         if(character == 'b'){
+            final long startTime = System.currentTimeMillis();
+           
+    
             Bot bot = new HillClimbBot(engine);
             Vector2 bestMove = bot.findBestMove();
+            System.out.println(bestMove);
+            final long endTime = System.currentTimeMillis();
+    
+            System.out.println("Total execution time: " + ((endTime - startTime)));
             // System.out.println(bestMove);
         //    Vector2 bestMove = new Vector2(1,1);
             engine.newShot(bestMove);

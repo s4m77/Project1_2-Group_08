@@ -15,8 +15,8 @@ public class RandomBot implements Bot{
     public Vector2 findBestMove() {
         Random rand = new Random();
 
-        float x = rand.nextFloat() * 10;
-        float y = rand.nextFloat() * 10;
+        float x = rand.nextFloat() * 4;
+        float y = rand.nextFloat() * 4;
 
         return new Vector2(x,y);
     }
