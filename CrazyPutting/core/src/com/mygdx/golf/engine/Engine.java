@@ -9,9 +9,7 @@ import com.mygdx.golf.Derivation;
 import com.mygdx.golf.FileInputManager;
 import com.mygdx.golf.MapScreen;
 import com.mygdx.golf.State;
-import com.mygdx.golf.engine.solvers.Euler;
-import com.mygdx.golf.engine.solvers.RungeKutta2;
-import com.mygdx.golf.engine.solvers.Solver;
+import com.mygdx.golf.engine.solvers.*;
 
 public class Engine {
     public final boolean USE_NEGATIVE_LAKES = false;
@@ -120,7 +118,7 @@ public class Engine {
                 inWater = true;
             }
         }else{
-            savedPos= state.getPosition();
+            savedPos = state.getPosition();
         }
     }
 
