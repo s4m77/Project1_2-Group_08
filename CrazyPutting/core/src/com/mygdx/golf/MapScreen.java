@@ -142,13 +142,6 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
                 }
             }
 
-                // if (n < 0) {
-                //     shapeRenderer.setColor(0, n / 10 + 0.4f, 255, 1);
-                // }
-
-                //shapeRenderer.setColor(0, 0, 255, 1);
-                //shapeRenderer.setColor(0, n / 10 + 0.4f, 255, 1);
-
                 shapeRenderer.rect(i, j, p, p);
 
             }

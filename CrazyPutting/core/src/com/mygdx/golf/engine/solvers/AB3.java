@@ -53,24 +53,15 @@ public class AB3 implements Solver{
         fun3 = sliding ? e.calcSlidingAcceleration(positions.get(2), velocities.get(2)) : 
                          e.calcAcceleration(positions.get(2), velocities.get(2));
 
-        return new Vector2(velocity.x + (e.getDt()/12)*(23*fun3.x - 16*fun2.x + 5*fun1.x), 
-                           velocity.y + (e.getDt()/12)*(23*fun3.y - 16*fun2.y + 5*fun1.y));
+        return new Vector2(velocity.x + (e.getDt()/12.f)*(23.f*fun3.x - 16.f*fun2.x + 5.f*fun1.x), 
+                           velocity.y + (e.getDt()/12.f)*(23.f*fun3.y - 16.f*fun2.y + 5.f*fun1.y));
     }
 
 
     @Override
     public Vector2 solvePos(Vector2 position, Vector2 velocity) {
-        if(positions.size() < 3){
-            return bootstrapper.solvePos(position, velocity);
-        }
+        return bootstrapper.solvePos(position, velocity);
 
-        Vector2 fun1, fun2, fun3;
-        fun1 = solveVel(positions.get(0), velocities.get(0));
-        fun2 = solveVel(positions.get(1), velocities.get(1));
-        fun3 = solveVel(positions.get(2), velocities.get(2));
-
-        return new Vector2(position.x + (e.getDt()/12)*(23*fun3.x - 16*fun2.x + 5*fun1.x),
-                           position.y + (e.getDt()/12)*(23*fun3.y - 16*fun2.y + 5*fun1.y));
     }
 
    

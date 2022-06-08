@@ -66,7 +66,7 @@ public class Engine {
     }
 
     public static void main(String[] args) {
-        Engine engine = new Engine(new Euler(), false);
+        Engine engine = new Engine(new AB3(), false);
 
         System.out.println(engine.calculateHeight(1, 1));
         final long startTime = System.currentTimeMillis();
