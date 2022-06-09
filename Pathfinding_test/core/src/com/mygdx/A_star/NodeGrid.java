@@ -15,7 +15,50 @@ public class NodeGrid {
 	}
 	Node startNode;
 	Node targetNode;
-    
+
+    public void setNodeToTarget(int x, int y) {
+		Node n = grid[y][x];
+		if(n.isStart || n.isTarget){
+			return;
+		}
+		if(targetNode != null) {
+
+			targetNode.isTarget =false;
+		}
+		n.isTarget = true;
+		targetNode = n;
+	}
+    public void setNodeToStart(int x, int y) {
+		Node n = grid[y][x];
+		if(n.isStart || n.isTarget){
+			return;
+		}
+		if(startNode != null) {
+
+			startNode.isStart =false;
+		}
+		
+		n.isStart = true;
+		startNode = n;
+	}
+    public void setNodeToWalkable(int x, int y) {
+		Node n = grid[y][x];
+		if(n.isStart || n.isTarget){
+			return;
+		}
+		n.walkable = true;
+		
+		
+	}
+    public void setNodeToNotWalkable(int x, int y) {
+		Node n = grid[y][x];
+		if(n.isStart || n.isTarget){
+			return;
+		}
+		n.walkable = false;
+		
+		
+	}
     Node[][] createGrid(int[][] intGrid) {
 		Node[][] grid = new Node[gridSizeY][gridSizeX];
 
@@ -37,6 +80,31 @@ public class NodeGrid {
 	}
 
 	public List<Node> GetNeighbours(Node node) {
+		List<Node> neighbours = new ArrayList<Node>();
+
+		for (int x = -1; x <= 1; x++) {
+			if (x == 0)
+				continue;
+
+			int checkX = node.gridX + x;
+			if (checkX >= 0 && checkX < gridSizeX ) {
+				neighbours.add(grid[node.gridY][checkX]);
+			}
+		}
+		for (int y = -1; y <= 1; y++) {
+			if (y == 0)
+				continue;
+
+			int checkY = node.gridY + y;
+			if (checkY >= 0 && checkY < gridSizeY ) {
+				neighbours.add(grid[checkY][node.gridX]);
+			}
+		}
+
+
+		return neighbours;
+	}
+	public List<Node> GetNeighboursWithDiags(Node node) {
 		List<Node> neighbours = new ArrayList<Node>();
 
 		for (int x = -1; x <= 1; x++) {

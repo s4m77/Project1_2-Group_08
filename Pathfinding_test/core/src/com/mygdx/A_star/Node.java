@@ -29,4 +29,9 @@ public class Node {
     public int getFCost() {
         return gCost + hCost;
     }
+
+   @Override
+   public String toString() {
+       return "X = " + gridX + " Y = " + gridY;
+   }
 }
