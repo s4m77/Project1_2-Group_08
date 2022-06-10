@@ -216,7 +216,8 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
            
     
             Bot bot = new HillClimbBot(engine);
-            Vector2 bestMove = bot.findBestMove();
+            // Vector2 bestMove = bot.findBestMove(engine.targetPosition);
+            Vector2 bestMove = bot.findBestMove(new Vector2(-5,2), false);
             System.out.println(bestMove);
             final long endTime = System.currentTimeMillis();
     

@@ -12,7 +12,7 @@ public class RandomBot implements Bot{
         this.engine = engine;
     }
     @Override
-    public Vector2 findBestMove() {
+    public Vector2 findBestMove(Vector2 target, boolean zeroWhenScored) {
         Random rand = new Random();
 
         float x = rand.nextFloat() * 4;

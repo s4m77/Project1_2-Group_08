@@ -56,7 +56,7 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
     float gridOriginY;
     float gridTopY;
     float lineWidth = 2;
-    float cellSizePixels = 40;
+    float cellSizePixels = 20;
 
     String clickMode = "create wall";
     boolean isClicking = false;
@@ -77,26 +77,19 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
 
         pathFinder = new PathFinding(intGrid);
         nodeGrid = pathFinder.grid;
-        pathFinder.findPath();
-
-        gridWidth = nodeGrid.grid[0].length * cellSizePixels;
-        gridHeight = nodeGrid.grid.length * cellSizePixels;
-
         this.dragDelta = new Vector2(0, 0);
 
-        gridOriginX = Boot.INSTANCE.getScreenWidth() / 2 - gridWidth / 2;
-        gridOriginY = Boot.INSTANCE.getScreenHeight() / 2 - gridHeight / 2;
-        gridTopY = Boot.INSTANCE.getScreenHeight() / 2 + gridHeight / 2;
-
+       
     }
 
     public void generateIntGrid() {
-        intGrid = new int[20][20];
+        intGrid = new int[20][40];
         for (int y = 0; y < intGrid.length; y++) {
             for (int x = 0; x < intGrid[0].length; x++) {
                 intGrid[y][x] = 0;
             }
         }
+        intGrid[0][0]=1;
     }
 
     // method for whole grid
@@ -152,12 +145,19 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
         }
     }
 
-    // native gdx method that is called for each frame
-    @Override
-    public void render(float delta) {
+    public void updateGridValues() {
+ 
+        gridWidth = nodeGrid.grid[0].length * cellSizePixels;
+        gridHeight = nodeGrid.grid.length * cellSizePixels;
         gridOriginX = Boot.INSTANCE.getScreenWidth() / 2 - gridWidth / 2 - dragDelta.x;
         gridOriginY = Boot.INSTANCE.getScreenHeight() / 2 - gridHeight / 2 - dragDelta.y;
         gridTopY = Boot.INSTANCE.getScreenHeight() / 2 + gridHeight / 2 - dragDelta.y;
+    }
+
+    // native gdx method that is called for each frame
+    @Override
+    public void render(float delta) {
+       updateGridValues();
         // Gdx stuff
         batch.setProjectionMatrix(camera.combined);
 
@@ -179,7 +179,7 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
         drawGrid();
         shapeRenderer.setColor(0, 0, 1, 1);
 
-        drawPath(pathFinder.path);
+        // drawPath(pathFinder.path);
         shapeRenderer.setColor(0, 1, 1, 1);
 
         drawPath(pathFinder.getStraightLinePath());
