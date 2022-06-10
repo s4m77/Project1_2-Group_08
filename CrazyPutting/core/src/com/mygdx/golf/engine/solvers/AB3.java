@@ -11,8 +11,8 @@ public class AB3 implements Solver{
     Solver bootstrapper = new RungeKutta3();
     Engine e;
 
-    private ArrayList<Vector2> positions = new ArrayList<Vector2>();
-    private ArrayList<Vector2> velocities = new ArrayList<Vector2>();
+    private ArrayList<Vector2> poss = new ArrayList<Vector2>();
+    private ArrayList<Vector2> vels = new ArrayList<Vector2>();
 
     @Override
     public void setEngine(Engine engine) {
@@ -23,9 +23,9 @@ public class AB3 implements Solver{
     @Override
     public Vector2 solveVel(Vector2 position, Vector2 velocity) {
         
-        if (velocities.size() < 3){
-            velocities.add(velocity);
-            positions.add(position);
+        if (vels.size() < 3){
+            vels.add(velocity);
+            poss.add(position);
             return bootstrapper.solveVel(position, velocity);
         }
         
@@ -46,12 +46,12 @@ public class AB3 implements Solver{
         }
 
         Vector2 fun1, fun2, fun3;
-        fun1 = sliding ? e.calcSlidingAcceleration(positions.get(0), velocities.get(0)) : 
-                         e.calcAcceleration(positions.get(0), velocities.get(0));
-        fun2 = sliding ? e.calcSlidingAcceleration(positions.get(1), velocities.get(1)) : 
-                         e.calcAcceleration(positions.get(1), velocities.get(1));
-        fun3 = sliding ? e.calcSlidingAcceleration(positions.get(2), velocities.get(2)) : 
-                         e.calcAcceleration(positions.get(2), velocities.get(2));
+        fun1 = sliding ? e.calcSlidingAcceleration(poss.get(0), vels.get(0)) : 
+                         e.calcAcceleration(poss.get(0), vels.get(0));
+        fun2 = sliding ? e.calcSlidingAcceleration(poss.get(1), vels.get(1)) : 
+                         e.calcAcceleration(poss.get(1), vels.get(1));
+        fun3 = sliding ? e.calcSlidingAcceleration(poss.get(2), vels.get(2)) : 
+                         e.calcAcceleration(poss.get(2), vels.get(2));
 
         return new Vector2(velocity.x + (e.getDt()/12.f)*(23.f*fun3.x - 16.f*fun2.x + 5.f*fun1.x), 
                            velocity.y + (e.getDt()/12.f)*(23.f*fun3.y - 16.f*fun2.y + 5.f*fun1.y));
@@ -61,7 +61,6 @@ public class AB3 implements Solver{
     @Override
     public Vector2 solvePos(Vector2 position, Vector2 velocity) {
         return bootstrapper.solvePos(position, velocity);
-
     }
 
    
