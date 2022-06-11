@@ -31,7 +31,7 @@ public class Engine {
     public double[] lakeCoords;
 
     public final boolean USING_MAZE = true;
-    public float gridCellSizeMetres =0.3f;
+    public float gridCellSizeMetres = 0.3f;
     private int[][] intGrid;
     public NodeGrid nodeGrid;
     public PathFinding pathFinder;
@@ -99,11 +99,11 @@ public class Engine {
 
     // resets the game
     public void initGame() {
-        if(USING_MAZE){
+        if (USING_MAZE) {
             state.setPosition(getCenterPositionFromGridCoords(nodeGrid.startNode));
             this.targetPosition = getCenterPositionFromGridCoords(nodeGrid.targetNode);
 
-        }else {
+        } else {
             this.targetPosition = inputManager.getTargetPos();
 
             state.setPosition(inputManager.getInitialPos());
@@ -114,7 +114,8 @@ public class Engine {
 
     }
 
-    // method that gets called every frame, it updates the ball position and also
+    // method that gets called evesquarePos.y frame, it updates the ball position
+    // and also
     // checks if user scored using the scored method
     public void update() {
         if (!ballIsStopped) {
@@ -131,11 +132,13 @@ public class Engine {
                 gameIsFinished = true;
             }
 
-            if (inWater(state)) {
+            if (inWater(state) || (USING_MAZE &&isCollidingWithWalls())) {
                 stopBall();
                 state.setPosition(savedPos); // put ball back to its previous position
                 inWater = true;
             }
+
+            
         } else {
             savedPos = state.getPosition();
         }
@@ -159,8 +162,6 @@ public class Engine {
 
         return distance;
     }
-
-    
 
     public boolean getBallIsStopped() {
         return ballIsStopped;
@@ -198,6 +199,15 @@ public class Engine {
         return false;
     }
 
+    // public boolean collidingWithWalls(State state) {
+    // float x = state.getPosition().x;
+    // float y = state.getPosition().y;
+
+    // for (int i = 0; i < intGrid.length; i++) {
+
+    // }
+    // }
+
     // stops the ball, and increments the number of shots
     public void stopBall() {
         numberOfShots++;
@@ -215,8 +225,62 @@ public class Engine {
     public Vector2 getCenterPositionFromGridCoords(Node node) {
         float x = (node.gridX + 0.5f) * gridCellSizeMetres;
         float y = (nodeGrid.grid.length - node.gridY - 0.5f) * gridCellSizeMetres;
-    // x = gridCellSizeMetres;
+        // x = gridCellSizeMetres;
         return new Vector2(x, y);
+    }
+
+    public Vector2 getPositionFromGridCoords(Node node) {
+        float x = (node.gridX) * gridCellSizeMetres;
+        float y = (nodeGrid.grid.length - node.gridY - 1) * gridCellSizeMetres;
+        // x = gridCellSizeMetres;
+        return new Vector2(x, y);
+    }
+
+    public boolean isCollidingWithWalls() {
+        for (int x = 0; x < nodeGrid.grid[0].length; x++) {
+            for (int y = 0; y < nodeGrid.grid.length; y++) {
+                Node n = nodeGrid.grid[y][x];
+                if (!n.walkable) {
+                    Vector2 squarePos = getPositionFromGridCoords(n);
+                    boolean isColliding = circleSquareCollising(state.getPosition(), BALL_RADIUS, squarePos,
+                            gridCellSizeMetres);
+                    if (isColliding) {
+                        System.out.println(n);
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean circleSquareCollising(Vector2 circlePos, float circleRadius, Vector2 squarePos,
+            float squareLength) {
+
+        float testX = circlePos.x;
+        float testY = circlePos.y;
+
+        if (circlePos.x < squarePos.x) {
+            testX = squarePos.x; // test left edge
+        } else if (circlePos.x > squarePos.x + squareLength) {
+            testX = squarePos.x + squareLength;
+        } // right edge}
+        if (circlePos.y < squarePos.y) {
+            testY = squarePos.y; // top edge
+        } else if (circlePos.y > squarePos.y + squareLength) {
+            testY = squarePos.y + squareLength;
+        } // bottom edge
+
+        // get distance from closest edges
+        float distX = circlePos.x - testX;
+        float distY = circlePos.y - testY;
+        float distance = (float) Math.sqrt((double) (distX * distX) + (distY * distY));
+
+        // if the distance is less than the radius, collision!
+        if (distance <= circleRadius) {
+            return true;
+        }
+        return false;
     }
 
     // methods that calculates the height of the map for a given x and y
@@ -248,7 +312,8 @@ public class Engine {
         return acceleration;
     }
 
-    // Overloaded this method for efficiency, if partials was already calculated
+    // Overloaded this method for efficiencirclePos.y, if partials was already
+    // calculated
     // might as well pass it as an argument,
     // since it takes a bit of time to calculate partial derivatives
     public Vector2 calcAcceleration(Vector2 position, Vector2 velocity, Vector2 partials) {
@@ -325,6 +390,7 @@ public class Engine {
     public float getTargetRadius() {
         return targetRadius;
     }
+
     public void generateIntGrid() {
         intGrid = new int[10][10];
         for (int y = 0; y < intGrid.length; y++) {
@@ -332,7 +398,21 @@ public class Engine {
                 intGrid[y][x] = 0;
             }
         }
-        intGrid[4][3]=2;
-        intGrid[6][6]=3;
+        intGrid[4][3] = 2;
+        intGrid[6][6] = 3;
+
+        intGrid = new int[][] {
+                { 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0 },
+                { 0, 0, 0, 1, 0, 0, 0, 3, 0, 0, 0 },
+                { 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 },
+                { 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 },
+                { 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0 },
+                { 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0 },
+                { 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0 },
+                { 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0 },
+                { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                { 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+                { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+        };
     }
 }
