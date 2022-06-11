@@ -124,4 +124,24 @@ public class NodeGrid {
 		return neighbours;
 	}
 
+	public ArrayList<Node> NonWallNeighbours(Node node) {
+		ArrayList<Node> neighbours = new ArrayList<Node>();
+
+		for (int x = -2; x <= 2; x= x+2) {
+			for (int y = -2; y <= 2; y= y+2) {
+				if (x == 0 && y == 0 || !(x==0 || y==0))
+					continue;
+
+				int checkX = node.gridX + x;
+				int checkY = node.gridY + y;
+
+				if (checkX >= 0 && checkX < gridSizeX && checkY >= 0 && checkY < gridSizeY) {
+					neighbours.add(grid[checkY][checkX]);
+				}
+			}
+		}
+
+		return neighbours;
+	}
+
 }
