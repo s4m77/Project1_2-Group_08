@@ -10,10 +10,9 @@ public class RuleBasedBot implements Bot {
         this.engine = engine;
     }
     @Override
-    public Vector2 findBestMove() {
+    public Vector2 findBestMove(Vector2 target, boolean zeroWhenScored) {
         Vector2 position = engine.state.getPosition();
-        Vector2 target = engine.targetPosition;
-        float distance = (float) engine.calcDistanceToTarget(position);
+        float distance = (float) engine.calcDistance(position,target);
         float x = target.x - position.x  ;
         float y = target.y - position.y  ;
 

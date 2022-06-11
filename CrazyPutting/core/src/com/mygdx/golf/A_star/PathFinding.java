@@ -1,4 +1,4 @@
-package com.mygdx.A_star;
+package com.mygdx.golf.A_star;
 
 import java.util.ArrayList;
 import java.util.Collections;

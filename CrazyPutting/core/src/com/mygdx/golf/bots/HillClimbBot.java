@@ -11,10 +11,10 @@ public class HillClimbBot implements Bot {
         this.engine = engine;
     }
     @Override
-    public Vector2 findBestMove() {
+    public Vector2 findBestMove(Vector2 target, boolean zeroWhenScored) {
         Vector2 bestShot = new Vector2(0,0);
         State botState = new State(engine.state.getPosition(), bestShot);
-        double minDistance = engine.simulateShot(botState);
+        double minDistance = engine.simulateShotDistanceToPoint(botState, target, zeroWhenScored);
         
         float[] ranges = new float[] {10, 4, 1};
 
@@ -33,7 +33,8 @@ public class HillClimbBot implements Bot {
                         botState.setPosition(engine.state.getPosition()); 
                         Vector2 shootingVelocity = new Vector2(bestShot.x + x, bestShot.y + y); 
                         botState.setVelocity(shootingVelocity);
-                        double distance = engine.simulateShot(botState);
+                        double distance = engine.simulateShotDistanceToPoint(botState, target,  zeroWhenScored);
+        
                         if(distance < minDistance) {
                         
     

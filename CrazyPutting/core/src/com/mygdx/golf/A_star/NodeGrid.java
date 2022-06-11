@@ -1,4 +1,4 @@
-package com.mygdx.A_star;
+package com.mygdx.golf.A_star;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,8 +13,8 @@ public class NodeGrid {
 		grid = createGrid(intGrid);
 
 	}
-	Node startNode;
-	Node targetNode;
+	public Node startNode;
+	public Node targetNode;
 
     public void setNodeToTarget(int x, int y) {
 		Node n = grid[y][x];
@@ -110,26 +110,6 @@ public class NodeGrid {
 		for (int x = -1; x <= 1; x++) {
 			for (int y = -1; y <= 1; y++) {
 				if (x == 0 && y == 0)
-					continue;
-
-				int checkX = node.gridX + x;
-				int checkY = node.gridY + y;
-
-				if (checkX >= 0 && checkX < gridSizeX && checkY >= 0 && checkY < gridSizeY) {
-					neighbours.add(grid[checkY][checkX]);
-				}
-			}
-		}
-
-		return neighbours;
-	}
-
-	public ArrayList<Node> NonWallNeighbours(Node node) {
-		ArrayList<Node> neighbours = new ArrayList<Node>();
-
-		for (int x = -2; x <= 2; x= x+2) {
-			for (int y = -2; y <= 2; y= y+2) {
-				if (x == 0 && y == 0 || !(x==0 || y==0))
 					continue;
 
 				int checkX = node.gridX + x;
