@@ -41,6 +41,7 @@ public class PathFinding {
             }
 
             for(Node neighbour : grid.GetNeighbours(node)) {
+
                 if (!neighbour.walkable || closedSet.contains(neighbour)) {
 					continue;
 				}

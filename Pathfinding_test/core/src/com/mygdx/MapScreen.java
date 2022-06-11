@@ -1,5 +1,7 @@
 package com.mygdx;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.badlogic.gdx.Gdx;
@@ -19,6 +21,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.mygdx.A_star.Node;
 import com.mygdx.A_star.NodeGrid;
 import com.mygdx.A_star.PathFinding;
+import com.mygdx.A_star.RandomMaze;
 
 public class MapScreen extends ScreenAdapter implements InputProcessor {
 
@@ -28,7 +31,8 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
     private BitmapFont font;
     ImmediateModeRenderer20 lineRenderer = new ImmediateModeRenderer20(false, true, 0);
 
-    private int[][] intGrid = new int[][] {
+    private int[][] intGrid= RandomMaze.returnFinalRandomMaze(10,10);
+    /*private int[][] intGrid = new int[][] {
             { 1, 0, 0, 1, 0, 0, 0, 0, 0, 1 },
             { 0, 0, 0, 1, 0, 0, 0, 3, 0, 0 },
             { 0, 0, 0, 1, 0, 0, 0, 0, 0, 0 },
@@ -41,6 +45,15 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
             { 0, 2, 0, 0, 0, 0, 0, 0, 0, 0 },
             { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
     };
+    */
+   /*  private int[][] intGrid = new int[][] {
+        { 1, 0, 3, 1, 0, 0 },
+        { 0, 0, 0, 1, 0, 0 },
+        { 0, 0, 0, 1, 0, 0 },
+        { 0, 2, 0, 1, 0, 0 }
+};*/
+
+
     private NodeGrid nodeGrid;
     PathFinding pathFinder;
 
@@ -150,7 +163,137 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
         drawPath(pathFinder.path);
         shapeRenderer.end();
 
+        
+
     }
+
+    public int[][] createRandomMaze(int gridSizeX, int gridSizeY){
+        int[][] randomMaze= new int[gridSizeX][gridSizeY];
+        int target;
+        int start;
+        ArrayList<Node> toVisit= new ArrayList<>();
+        ArrayList<Node> visited= new ArrayList<>();
+
+        //initialize randomMaze
+        for(int i=0; i<gridSizeX; i++){
+            for(int j= 0; j<gridSizeY; j++){
+                randomMaze[i][j]= 1;
+            }
+        }
+
+        //create nodeGrid from randomMaze
+        NodeGrid nodeGrid= new NodeGrid(randomMaze);
+
+        //add nodes to toVisit
+        for(int i=0; i<gridSizeX; i++){
+            for(int j= 0; j<gridSizeY; j++){
+                toVisit.add(nodeGrid.grid[i][j]);
+            }
+        }
+
+        //start
+        Node currentNode;
+        Node currentNeighbour;
+        NodeGrid newGrid;
+        int visiting= visited.size();
+
+        //initialize
+        currentNode= toVisit.get((int)Math.random()*toVisit.size()); 
+        currentNode.neighbours= nodeGrid.NonWallNeighbours(currentNode);
+        currentNeighbour= currentNode.neighbours.get((int) Math.random()*currentNode.neighbours.size()); //same as 4
+        toVisit.remove(currentNode);
+               visited.add(currentNode);
+
+                for(Node[] nodeRow : nodeGrid.grid){
+                    for(Node node : nodeRow){
+                        node.neighbours= nodeGrid.NonWallNeighbours(currentNode);
+                        node.neighbours.remove(currentNode);
+                    }
+                }
+
+        while(!toVisit.isEmpty()){
+            while(!currentNode.neighbours.isEmpty()){
+            
+                currentNode= currentNeighbour;
+                currentNode.neighbours= nodeGrid.NonWallNeighbours(currentNode);
+                currentNeighbour= currentNode.neighbours.get((int) Math.random()*currentNode.neighbours.size()); 
+
+                if(toVisit.contains(currentNode)){
+                    toVisit.remove(currentNode);
+                }
+                if(!visited.contains(currentNode)){
+                    visited.add(currentNode);
+                }
+
+                for(Node[] nodeRow : nodeGrid.grid){
+                    for(Node node : nodeRow){
+                        node.neighbours= nodeGrid.NonWallNeighbours(currentNode);
+                        node.neighbours.remove(currentNode);
+                    }
+                }
+
+                if(!currentNode.neighbours.isEmpty()){
+                    nodeGrid= breakWall(currentNode, currentNeighbour, nodeGrid);
+                }
+            }
+            
+            visiting= visiting-1;
+            currentNode= currentNeighbour= visited.get(visiting);   
+        }
+
+
+
+
+        
+        for(Node[] nodeRow : nodeGrid.grid){
+            for(Node node : nodeRow){
+                node.neighbours= nodeGrid.NonWallNeighbours(currentNode);
+                node.neighbours.remove(currentNode);
+            }
+        }
+
+        //turn nodeGrid into randomMaze
+        for(int i=0; i<nodeGrid.grid.length; i++){
+            for(int j=0; j<nodeGrid.grid[i].length; j++){
+                if(nodeGrid.grid[i][j].walkable== true){
+                    randomMaze[i][j]= 0;
+                }else{
+                    randomMaze[i][j]=1;
+                }
+            }
+        }
+
+        //initialize random target and start
+        do{
+            target= randomMaze[(int) Math.random()*gridSizeX][(int) Math.random()*gridSizeY];
+            start= randomMaze[(int) Math.random()*gridSizeX][(int) Math.random()*gridSizeY];
+            }
+            while(target == start || !((target== 1 || start== 1)));
+        
+
+            
+        return randomMaze;
+    }
+
+    public NodeGrid breakWall(Node currentNode, Node neighbourNode, NodeGrid nodeGrid){
+        int x= (currentNode.gridX + neighbourNode.gridX)/2;
+        int y= (currentNode.gridY + neighbourNode.gridY)/2;
+
+        nodeGrid.grid[currentNode.gridX][currentNode.gridY].walkable= false;
+        nodeGrid.grid[neighbourNode.gridX][neighbourNode.gridY].walkable= false;
+        nodeGrid.grid[y][x].walkable= false;
+
+        return nodeGrid;
+    }
+
+    /*public void renderEndScreen() {
+        batch.begin();
+        font.getData().setScale(1.5f, 1.5f);
+        String str = "You made it in ";
+        font.draw(batch, str, Boot.INSTANCE.getScreenWidth() / 2 - 214, Boot.INSTANCE.getScreenHeight() / 2+30);
+        font.draw(batch, "Press enter to restart", Boot.INSTANCE.getScreenWidth() / 2 - 90, Boot.INSTANCE.getScreenHeight() / 2 );
+        batch.end();
+    }*/
 
     @Override
     public boolean keyDown(int keycode) {
