@@ -29,7 +29,7 @@ public class Boot extends Game {
         //creates the engine with the selected solver 
         Engine engine = new Engine(new Euler(), true);
         //creates the GUI with the camera and engine
-        MapScreenMaze mapScreen = new MapScreenMaze(orthographicCamera, engine);
+        MapScreen mapScreen = new MapScreen(orthographicCamera, engine);
         Gdx.input.setInputProcessor(mapScreen);
 
         setScreen(mapScreen);

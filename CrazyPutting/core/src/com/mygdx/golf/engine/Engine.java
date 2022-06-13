@@ -12,6 +12,7 @@ import com.mygdx.golf.State;
 import com.mygdx.golf.A_star.Node;
 import com.mygdx.golf.A_star.NodeGrid;
 import com.mygdx.golf.A_star.PathFinding;
+import com.mygdx.golf.engine.solvers.AB3;
 import com.mygdx.golf.engine.solvers.Euler;
 import com.mygdx.golf.engine.solvers.RungeKutta2;
 import com.mygdx.golf.engine.solvers.Solver;
@@ -75,26 +76,6 @@ public class Engine {
 
         }
 
-    }
-
-    public static void main(String[] args) {
-        Engine engine = new Engine(new AB3(), false);
-
-        System.out.println(engine.calculateHeight(1, 1));
-        final long startTime = System.currentTimeMillis();
-        Random rn = new Random();
-        int RANGE = 80;
-        for (int i = 0; i < RANGE; i++) {
-
-            State s = new State(new Vector2(rn.nextInt(10), rn.nextInt(10)),
-                    new Vector2(rn.nextInt(10), rn.nextInt(10)));
-            // double distance = engine.simulateShotDistanceToTarget(s);
-        }
-
-        final long endTime = System.currentTimeMillis();
-
-        System.out.println("Total execution time: " + ((endTime - startTime) / RANGE));
-        // System.out.println(distance);
     }
 
     // resets the game
@@ -329,23 +310,7 @@ public class Engine {
         return acceleration;
     }
 
-    public Vector2 calcImprovedAcceleration(Vector2 position, Vector2 velocity, Vector2 partials){
-        Vector2 acceleration = new Vector2();
-
-        acceleration.x= ((-1 * GRAVITY * partials.x)/(1 + partials.x*partials.x + partials.y*partials.y))
-        -((getKinetic(position)*GRAVITY*velocity.x)/
-        ((float) Math.sqrt((1+ partials.x*partials.x + partials.y*partials.y)*
-        (velocity.x*velocity.x + velocity.y*velocity.y+ (partials.x * velocity.x + partials.y * velocity.y)*
-        (partials.x * velocity.x + partials.y * velocity.y)))));
-
-        acceleration.y= ((-1 * GRAVITY * partials.y)/(1 + partials.x*partials.x + partials.y*partials.y))
-        -((getKinetic(position)*GRAVITY*velocity.y)/
-        ((float) Math.sqrt((1+ partials.x*partials.x + partials.y*partials.y)*
-        (velocity.x*velocity.x + velocity.y*velocity.y+ (partials.x * velocity.x + partials.y * velocity.y)*
-        (partials.x * velocity.x + partials.y * velocity.y)))));
-
-        return acceleration;
-    }
+    
 
     // read the first paragraph of the project manual page 9
     public Vector2 calcSlidingAcceleration(Vector2 position, Vector2 velocity) {
@@ -371,17 +336,35 @@ public class Engine {
         return acceleration;
     }
 
+    public Vector2 calcImprovedAcceleration(Vector2 position, Vector2 velocity, Vector2 partials){
+        Vector2 acceleration = new Vector2();
+
+        acceleration.x= ((-1 * GRAVITY * partials.x)/(1 + partials.x*partials.x + partials.y*partials.y))
+        -((getKinetic(position)*GRAVITY*velocity.x)/
+        ((float) Math.sqrt((1+ partials.x*partials.x + partials.y*partials.y)*
+        (velocity.x*velocity.x + velocity.y*velocity.y+ (partials.x * velocity.x + partials.y * velocity.y)*
+        (partials.x * velocity.x + partials.y * velocity.y)))));
+
+        acceleration.y= ((-1 * GRAVITY * partials.y)/(1 + partials.x*partials.x + partials.y*partials.y))
+        -((getKinetic(position)*GRAVITY*velocity.y)/
+        ((float) Math.sqrt((1+ partials.x*partials.x + partials.y*partials.y)*
+        (velocity.x*velocity.x + velocity.y*velocity.y+ (partials.x * velocity.x + partials.y * velocity.y)*
+        (partials.x * velocity.x + partials.y * velocity.y)))));
+
+        return acceleration;
+    }
+
     public Vector2 calcImprovedSlidingAcceleration(Vector2 position, Vector2 velocity, Vector2 partials){
         Vector2 acceleration = new Vector2();
 
         acceleration.x= ((-1 * GRAVITY * partials.x)/(1 + partials.x*partials.x + partials.y*partials.y))
-        +((getKinetic(position)*GRAVITY*partials.x)/
+        +((getStatic(position)*GRAVITY*partials.x)/
         ((float) Math.sqrt((1+ partials.x*partials.x + partials.y*partials.y)*
         (partials.x*partials.x + partials.y*partials.y+ (partials.x * partials.x + partials.y * partials.y)*
         (partials.x * partials.x + partials.y * partials.y)))));
 
         acceleration.y= ((-1 * GRAVITY * partials.y)/(1 + partials.x*partials.x + partials.y*partials.y))
-        +((getKinetic(position)*GRAVITY*partials.y)/
+        +((getStatic(position)*GRAVITY*partials.y)/
         ((float) Math.sqrt((1+ partials.x*partials.x + partials.y*partials.y)*
         (partials.x*partials.x + partials.y*partials.y+ (partials.x * partials.x + partials.y * partials.y)*
         (partials.x * partials.x + partials.y * partials.y)))));
