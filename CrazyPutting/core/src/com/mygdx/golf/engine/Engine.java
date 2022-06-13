@@ -27,7 +27,7 @@ public class Engine {
     public Vector2 targetPosition;
     private float targetRadius;
     public final float BALL_RADIUS = 0.1f;
-    private final float dt = 0.05f;
+    private final float dt = 0.01f;
     public double[] sandPitCoords;
     public double[] lakeCoords;
 
