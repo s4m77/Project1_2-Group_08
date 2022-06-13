@@ -31,7 +31,7 @@ public class Engine {
     public double[] sandPitCoords;
     public double[] lakeCoords;
 
-    public final boolean USING_MAZE = true;
+    public final boolean USING_MAZE = false;
     public float gridCellSizeMetres = 0.8f;
     private int[][] intGrid;
     public NodeGrid nodeGrid;
