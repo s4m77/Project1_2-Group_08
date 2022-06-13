@@ -12,6 +12,7 @@ public class PathFinding {
     public PathFinding(int[][] intGrid) {
         grid = new NodeGrid(intGrid);
         path = new ArrayList<Node>();
+        findPath();
     }
 
     public void findPath() {

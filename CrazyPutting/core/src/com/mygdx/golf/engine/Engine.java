@@ -31,7 +31,7 @@ public class Engine {
     public double[] lakeCoords;
 
     public final boolean USING_MAZE = true;
-    public float gridCellSizeMetres = 0.3f;
+    public float gridCellSizeMetres = 0.8f;
     private int[][] intGrid;
     public NodeGrid nodeGrid;
     public PathFinding pathFinder;
@@ -79,22 +79,25 @@ public class Engine {
 
     public static void main(String[] args) {
         Engine engine = new Engine(new Euler(), false);
+        State botState = new State();
 
-        System.out.println(engine.calculateHeight(1, 1));
-        final long startTime = System.currentTimeMillis();
-        Random rn = new Random();
-        int RANGE = 80;
-        for (int i = 0; i < RANGE; i++) {
+        // Vector2 testShot = new Vector2(initialShot.x * scalar, initialShot.y *
+        // scalar);
+        Vector2 testShot = new Vector2(0, 0.9f);
+        System.out.println("testShot " + testShot);
+        botState.setPosition(engine.state.getPosition());
+        botState.setVelocity(testShot);
+        double distA = engine.simulatePreciseShotToPoint(botState, new Vector2(0, 0));
+        System.out.println(distA);
 
-            State s = new State(new Vector2(rn.nextInt(10), rn.nextInt(10)),
-                    new Vector2(rn.nextInt(10), rn.nextInt(10)));
-            // double distance = engine.simulateShotDistanceToTarget(s);
-        }
+        botState = new State();
+        testShot = new Vector2(0, 0.2f);
+        System.out.println("testShot " + testShot);
+        botState.setPosition(engine.state.getPosition());
+        botState.setVelocity(testShot);
+        double distB = engine.simulatePreciseShotToPoint(botState, new Vector2(0, 0));
+        System.out.println(distB);
 
-        final long endTime = System.currentTimeMillis();
-
-        System.out.println("Total execution time: " + ((endTime - startTime) / RANGE));
-        // System.out.println(distance);
     }
 
     // resets the game
@@ -132,33 +135,77 @@ public class Engine {
                 gameIsFinished = true;
             }
 
-            if (inWater(state) || (USING_MAZE &&isCollidingWithWalls())) {
+            if (inWater(state) || (USING_MAZE && isCollidingWithWalls(state))) {
+                System.out.println("fail");
                 stopBall();
                 state.setPosition(savedPos); // put ball back to its previous position
                 inWater = true;
             }
 
-            
         } else {
             savedPos = state.getPosition();
         }
     }
 
-    public double simulateShotDistanceToPoint(State botState, Vector2 position, boolean zeroWhenScored) {
-        while (botState.getVelocity().x != 0 && botState.getVelocity().y != 0) {
+    public double simulateShotDistanceToPoint(State botState, Vector2 target, boolean zeroWhenScored) {
+        while (botState.getVelocity().x != 0 || botState.getVelocity().y != 0) {
 
             botState.setPosition(solver.solvePos(botState.getPosition(), botState.getVelocity()));
             Vector2 newVelocity = solver.solveVel(botState.getPosition(), botState.getVelocity());
+            System.out.println("newVelocity " + newVelocity);
             botState.setVelocity(newVelocity);
             if (zeroWhenScored && scored(botState)) {
                 return 0;
             }
-            if (inWater(botState)) {
+            if (inWater(botState) || (USING_MAZE && isCollidingWithWalls(botState))) {
                 return Double.MAX_VALUE;
             }
 
         }
-        double distance = calcDistance(botState.getPosition(), position);
+        double distance = calcDistance(botState.getPosition(), target);
+
+        return distance;
+    }
+
+    public double simulatePreciseShotToPoint(State botState, Vector2 target) {
+        Vector2 initialPos = botState.getPosition();
+        double distance;
+        boolean shouldBreak = false;
+        while ((botState.getVelocity().x != 0 || botState.getVelocity().y != 0) && !shouldBreak) {
+
+            botState.setPosition(solver.solvePos(botState.getPosition(), botState.getVelocity()));
+            Vector2 newVelocity = solver.solveVel(botState.getPosition(), botState.getVelocity());
+            botState.setVelocity(newVelocity);
+
+            if (inWater(botState) || (USING_MAZE && isCollidingWithWalls(botState))) {
+                float distXInitialToTarget = Math.abs(initialPos.x - target.x);
+                float distXInitialToCur = Math.abs(initialPos.x - botState.getPosition().x);
+
+                float distYInitialToTarget = Math.abs(initialPos.y - target.y);
+                float distYInitialToCur = Math.abs(initialPos.y - botState.getPosition().y);
+                System.out.println("Collided with wall");
+
+                if (distXInitialToCur < distXInitialToTarget || distYInitialToCur < distYInitialToTarget) {
+                    return Double.MIN_VALUE;
+                } else {
+                    return Double.MAX_VALUE;
+                }
+
+            }
+
+        }
+        // System.out.println("Out of loop");
+        distance = calcDistance(botState.getPosition(), target);
+
+        float distXInitialToTarget = Math.abs(initialPos.x - target.x);
+        float distXInitialToCur = Math.abs(initialPos.x - botState.getPosition().x);
+
+        float distYInitialToTarget = Math.abs(initialPos.y - target.y);
+        float distYInitialToCur = Math.abs(initialPos.y - botState.getPosition().y);
+        if (distXInitialToCur < distXInitialToTarget || distYInitialToCur < distYInitialToTarget) {
+            distance = -distance;
+
+        }
 
         return distance;
     }
@@ -236,7 +283,7 @@ public class Engine {
         return new Vector2(x, y);
     }
 
-    public boolean isCollidingWithWalls() {
+    public boolean isCollidingWithWalls(State state) {
         for (int x = 0; x < nodeGrid.grid[0].length; x++) {
             for (int y = 0; y < nodeGrid.grid.length; y++) {
                 Node n = nodeGrid.grid[y][x];
@@ -245,7 +292,7 @@ public class Engine {
                     boolean isColliding = circleSquareCollising(state.getPosition(), BALL_RADIUS, squarePos,
                             gridCellSizeMetres);
                     if (isColliding) {
-                        System.out.println(n);
+                        // System.out.println(n);
                         return true;
                     }
                 }
@@ -329,20 +376,22 @@ public class Engine {
         return acceleration;
     }
 
-    public Vector2 calcImprovedAcceleration(Vector2 position, Vector2 velocity, Vector2 partials){
+    public Vector2 calcImprovedAcceleration(Vector2 position, Vector2 velocity, Vector2 partials) {
         Vector2 acceleration = new Vector2();
 
-        acceleration.x= ((-1 * GRAVITY * partials.x)/(1 + partials.x*partials.x + partials.y*partials.y))
-        -((getKinetic(position)*GRAVITY*velocity.x)/
-        ((float) Math.sqrt((1+ partials.x*partials.x + partials.y*partials.y)*
-        (velocity.x*velocity.x + velocity.y*velocity.y+ (partials.x * velocity.x + partials.y * velocity.y)*
-        (partials.x * velocity.x + partials.y * velocity.y)))));
+        acceleration.x = ((-1 * GRAVITY * partials.x) / (1 + partials.x * partials.x + partials.y * partials.y))
+                - ((getKinetic(position) * GRAVITY * velocity.x) /
+                        ((float) Math.sqrt((1 + partials.x * partials.x + partials.y * partials.y) *
+                                (velocity.x * velocity.x + velocity.y * velocity.y
+                                        + (partials.x * velocity.x + partials.y * velocity.y) *
+                                                (partials.x * velocity.x + partials.y * velocity.y)))));
 
-        acceleration.y= ((-1 * GRAVITY * partials.y)/(1 + partials.x*partials.x + partials.y*partials.y))
-        -((getKinetic(position)*GRAVITY*velocity.y)/
-        ((float) Math.sqrt((1+ partials.x*partials.x + partials.y*partials.y)*
-        (velocity.x*velocity.x + velocity.y*velocity.y+ (partials.x * velocity.x + partials.y * velocity.y)*
-        (partials.x * velocity.x + partials.y * velocity.y)))));
+        acceleration.y = ((-1 * GRAVITY * partials.y) / (1 + partials.x * partials.x + partials.y * partials.y))
+                - ((getKinetic(position) * GRAVITY * velocity.y) /
+                        ((float) Math.sqrt((1 + partials.x * partials.x + partials.y * partials.y) *
+                                (velocity.x * velocity.x + velocity.y * velocity.y
+                                        + (partials.x * velocity.x + partials.y * velocity.y) *
+                                                (partials.x * velocity.x + partials.y * velocity.y)))));
 
         return acceleration;
     }
@@ -371,20 +420,22 @@ public class Engine {
         return acceleration;
     }
 
-    public Vector2 calcImprovedSlidingAcceleration(Vector2 position, Vector2 velocity, Vector2 partials){
+    public Vector2 calcImprovedSlidingAcceleration(Vector2 position, Vector2 velocity, Vector2 partials) {
         Vector2 acceleration = new Vector2();
 
-        acceleration.x= ((-1 * GRAVITY * partials.x)/(1 + partials.x*partials.x + partials.y*partials.y))
-        +((getKinetic(position)*GRAVITY*partials.x)/
-        ((float) Math.sqrt((1+ partials.x*partials.x + partials.y*partials.y)*
-        (partials.x*partials.x + partials.y*partials.y+ (partials.x * partials.x + partials.y * partials.y)*
-        (partials.x * partials.x + partials.y * partials.y)))));
+        acceleration.x = ((-1 * GRAVITY * partials.x) / (1 + partials.x * partials.x + partials.y * partials.y))
+                + ((getKinetic(position) * GRAVITY * partials.x) /
+                        ((float) Math.sqrt((1 + partials.x * partials.x + partials.y * partials.y) *
+                                (partials.x * partials.x + partials.y * partials.y
+                                        + (partials.x * partials.x + partials.y * partials.y) *
+                                                (partials.x * partials.x + partials.y * partials.y)))));
 
-        acceleration.y= ((-1 * GRAVITY * partials.y)/(1 + partials.x*partials.x + partials.y*partials.y))
-        +((getKinetic(position)*GRAVITY*partials.y)/
-        ((float) Math.sqrt((1+ partials.x*partials.x + partials.y*partials.y)*
-        (partials.x*partials.x + partials.y*partials.y+ (partials.x * partials.x + partials.y * partials.y)*
-        (partials.x * partials.x + partials.y * partials.y)))));
+        acceleration.y = ((-1 * GRAVITY * partials.y) / (1 + partials.x * partials.x + partials.y * partials.y))
+                + ((getKinetic(position) * GRAVITY * partials.y) /
+                        ((float) Math.sqrt((1 + partials.x * partials.x + partials.y * partials.y) *
+                                (partials.x * partials.x + partials.y * partials.y
+                                        + (partials.x * partials.x + partials.y * partials.y) *
+                                                (partials.x * partials.x + partials.y * partials.y)))));
 
         return acceleration;
     }
@@ -438,17 +489,17 @@ public class Engine {
         intGrid[6][6] = 3;
 
         intGrid = new int[][] {
-                { 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0 },
-                { 0, 0, 0, 1, 0, 0, 0, 3, 0, 0, 0 },
+                { 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0 },
+                { 0, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0 },
+                { 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0 },
+                { 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0 },
+                { 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0 },
+                { 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0 },
+                { 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0 },
+                { 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0 },
+                { 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, 0 },
+                { 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 },
                 { 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 },
-                { 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 },
-                { 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0 },
-                { 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0 },
-                { 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0 },
-                { 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0 },
-                { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-                { 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-                { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
         };
     }
 }
