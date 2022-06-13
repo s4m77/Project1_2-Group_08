@@ -5,5 +5,5 @@ import com.mygdx.golf.engine.Engine;
 
 public interface Bot {
     
-    public Vector2 findBestMove();
+    public Vector2 findBestMove(Vector2 target, boolean zeroWhenScored);
 }

@@ -14,7 +14,7 @@ public class BruteForceBot implements Bot{
     }
 
 
-    public Vector2 findBestMove() {
+    public Vector2 findBestMove(Vector2 target, boolean zeroWhenScored) {
         // State state = new State();
         double minDistance = Double.MAX_VALUE;
         float range = 7;
@@ -26,7 +26,7 @@ public class BruteForceBot implements Bot{
                 Vector2 shootingVelocity = new Vector2(x,y); 
                 botState.setVelocity(shootingVelocity);
 
-                double distance = engine.simulateShot(botState);
+                double distance = engine.simulateShotDistanceToPoint(botState, target, zeroWhenScored);
                 if(distance == 0) {
                     return shootingVelocity;
                 }
