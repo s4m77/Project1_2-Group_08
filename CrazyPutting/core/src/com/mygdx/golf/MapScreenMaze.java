@@ -1,5 +1,8 @@
 package com.mygdx.golf;
 
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.ScreenAdapter;
@@ -16,8 +19,10 @@ import com.mygdx.golf.A_star.NodeGrid;
 import com.mygdx.golf.A_star.PathFinding;
 import com.mygdx.golf.bots.Bot;
 import com.mygdx.golf.bots.HillClimbBot;
+import com.mygdx.golf.bots.MazeBot;
 import com.mygdx.golf.bots.RandomBot;
 import com.mygdx.golf.bots.RuleBasedBot;
+import com.mygdx.golf.bots.StraightLineBot;
 import com.mygdx.golf.bots.BruteForceBot;
 import com.mygdx.golf.engine.Engine;
 
@@ -115,7 +120,8 @@ public class MapScreenMaze extends ScreenAdapter implements InputProcessor {
         // shapeRenderer.rectLine(gridOriginX, gridOriginY, gridOriginX +500,
         // gridOriginY + gridHeight, lineWidth);
         drawGrid();
-
+        drawPath(engine.pathFinder.path);
+        // drawPath(engine.pathFinder.getStraightLinePath());
         // renderMap();
 
         // draws golf ball
@@ -126,8 +132,8 @@ public class MapScreenMaze extends ScreenAdapter implements InputProcessor {
         // draws the hole
         shapeRenderer.setColor(0, 0, 0, 1);
         shapeRenderer.circle(metresToPixels(engine.getTargetPosition().x, true),
-        metresToPixels(engine.getTargetPosition().y, false),
-        engine.getTargetRadius() / metreToPixelCoeff);
+                metresToPixels(engine.getTargetPosition().y, false),
+                engine.getTargetRadius() / metreToPixelCoeff);
 
         shapeRenderer.end();
 
@@ -136,9 +142,9 @@ public class MapScreenMaze extends ScreenAdapter implements InputProcessor {
         String str = "Number of shots : " + engine.getNumberOfShots();
         font.draw(batch, str, 10, 20);
         if (engine.getBallIsStopped()) {
-        str = "Ball stopped at : x = " + engine.state.getPosition().x + ", y = " +
-        engine.state.getPosition().y;
-        font.draw(batch, str, 10, Boot.INSTANCE.getScreenHeight() - 10);
+            str = "Ball stopped at : x = " + engine.state.getPosition().x + ", y = " +
+                    engine.state.getPosition().y;
+            font.draw(batch, str, 10, Boot.INSTANCE.getScreenHeight() - 10);
 
         }
 
@@ -264,6 +270,22 @@ public class MapScreenMaze extends ScreenAdapter implements InputProcessor {
         }
     }
 
+    public void drawPath(List<Node> path) {
+        shapeRenderer.setColor(0.8f, 0.45f, 0, 1);
+
+        for (Node n : path) {
+            int x = n.gridX;
+            int y = n.gridY;
+            if (n.isTarget) {
+                continue;
+            }
+            shapeRenderer.rect(gridOriginX + x * getCellSizeInPixels() + 1,
+                    gridTopY - (y + 1) * getCellSizeInPixels() + 1,
+                    getCellSizeInPixels() - lineWidth,
+                    getCellSizeInPixels() - lineWidth);
+        }
+    }
+
     public void renderEndScreen() {
         batch.begin();
         font.getData().setScale(1.5f, 1.5f);
@@ -316,7 +338,7 @@ public class MapScreenMaze extends ScreenAdapter implements InputProcessor {
 
         return false;
     }
-
+    int counter = 0;
     @Override
     public boolean keyTyped(char character) {
         // restart game when press enter
@@ -324,18 +346,31 @@ public class MapScreenMaze extends ScreenAdapter implements InputProcessor {
             engine.initGame();
         }
         if (character == 'b') {
-            final long startTime = System.currentTimeMillis();
+            MazeBot mazeBot = new MazeBot(engine);
+            Vector2 bestMove = mazeBot.solveMaze();
+            // Bot bot = new StraightLineBot(engine);
+            // // Vector2 bestMove = bot.findBestMove(engine.targetPosition);
+            // List<Node> path = engine.pathFinder.getStraightLinePath();
 
-            Bot bot = new HillClimbBot(engine);
-            // Vector2 bestMove = bot.findBestMove(engine.targetPosition);
-            Vector2 bestMove = bot.findBestMove(new Vector2(-5, 2), false);
-            System.out.println(bestMove);
-            final long endTime = System.currentTimeMillis();
+            // // for (int i = 0; i < path.size(); i++) {
+            // Vector2 nextPos = engine.getCenterPositionFromGridCoords(path.get(counter));
 
-            System.out.println("Total execution time: " + ((endTime - startTime)));
-            // System.out.println(bestMove);
-            // Vector2 bestMove = new Vector2(1,1);
+            // Vector2 bestMove = bot.findBestMove(nextPos, false);
             engine.newShot(bestMove);
+            counter++;
+            // try {
+            //     Thread.sleep(4000);
+            // } catch (InterruptedException ex) {
+            //     Thread.currentThread().interrupt();
+            // }
+            // System.out.println("Next move");
+            // nextPos = engine.getCenterPositionFromGridCoords(path.get(1));
+
+            // bestMove = bot.findBestMove(nextPos, false);
+           
+            // engine.newShot(bestMove);
+            // }
+
         }
         return false;
     }
