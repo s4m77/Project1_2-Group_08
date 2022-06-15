@@ -24,7 +24,7 @@ public class Euler implements Solver {
     @Override
     public Vector2 solveVel(Vector2 position, Vector2 velocity) {
         Vector2 partials = engine.calcPartialDerivative(position);
-        Vector2 acceleration = engine.calcImprovedAcceleration(position,velocity, partials);
+        Vector2 acceleration = engine.calcAcceleration(position,velocity);
         
         float epsilon = 0.05f;
         if(velocity.x < epsilon && velocity.x > -epsilon && velocity.y < epsilon && velocity.y > -epsilon  ) {
@@ -35,10 +35,10 @@ public class Euler implements Solver {
             partials.y)) {
                 //if the grass static friction is stronger than the force of gravity with the slope
                 // engine.stopBall();
-                return new Vector2(0,0);
+                //return new Vector2(0,0);
             }else {
 
-                acceleration = engine.calcImprovedSlidingAcceleration(position, velocity, partials);
+                acceleration = engine.calcSlidingAcceleration(position, velocity);
             }
             
 
