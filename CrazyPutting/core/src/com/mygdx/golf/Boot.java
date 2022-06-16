@@ -28,7 +28,7 @@ public class Boot extends Game {
         this.orthographicCamera.setToOrtho(false, screenWidth,screenHeight);
 
         //creates the engine with the selected solver 
-        Engine engine = new Engine(new Euler(), false);
+        Engine engine = new Engine(new Euler(), true);
         //creates the GUI with the camera and engine
         // MapScreenMaze mapScreen = new MapScreenMaze(orthographicCamera, engine);
         MapCreatorScreen mapCreatorScreen = new MapCreatorScreen(orthographicCamera);

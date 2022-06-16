@@ -12,6 +12,7 @@ import com.mygdx.golf.State;
 import com.mygdx.golf.A_star.Node;
 import com.mygdx.golf.A_star.NodeGrid;
 import com.mygdx.golf.A_star.PathFinding;
+import com.mygdx.golf.engine.solvers.AB3;
 import com.mygdx.golf.engine.solvers.Euler;
 import com.mygdx.golf.engine.solvers.RungeKutta2;
 import com.mygdx.golf.engine.solvers.Solver;
@@ -27,11 +28,13 @@ public class Engine {
     public Vector2 targetPosition;
     private float targetRadius;
     public final float BALL_RADIUS = 0.1f;
-    private final float dt = 0.05f;
+
+    private final float dt = 0.0001f;
+
     public double[] sandPitCoords;
     public double[] lakeCoords;
 
-    public final boolean USING_MAZE = true;
+    public final boolean USING_MAZE = false;
     public float gridCellSizeMetres = 0.8f;
     private int[][] intGrid;
     public NodeGrid nodeGrid;
