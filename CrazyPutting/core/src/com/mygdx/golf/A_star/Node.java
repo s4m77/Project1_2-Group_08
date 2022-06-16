@@ -1,5 +1,7 @@
 package com.mygdx.golf.A_star;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.math.Vector2;
 
 public class Node {
@@ -15,6 +17,7 @@ public class Node {
 	public int gridY;
 
     public Node parent;
+    public ArrayList<Node> neighbours;
 
     public Node(boolean _walkable,boolean _isStart, boolean _isTarget,  int _gridX, int _gridY) {
         walkable = _walkable;
@@ -28,6 +31,14 @@ public class Node {
 
     public int getFCost() {
         return gCost + hCost;
+    }
+
+    public Boolean hasNeighbours(){
+        if(neighbours.isEmpty()){
+            return false;
+        }else{
+            return true;
+        }
     }
 
    @Override

@@ -60,6 +60,6 @@ project(":core") {
         api "com.badlogicgames.box2dlights:box2dlights:$box2DLightsVersion"
         implementation fileTree(dir: 'libs', include: ['*.jar'])
         implementation 'org.mariuszgromada.math:MathParser.org-mXparser:4.4.2'
-    
+    implementation 'com.github.cliftonlabs:json-simple:3.1.0'
     }
 }

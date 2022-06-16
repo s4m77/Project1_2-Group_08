@@ -124,4 +124,45 @@ public class NodeGrid {
 		return neighbours;
 	}
 
+	public int[][] toIntGrid() {
+		int[][] intGrid = new int[gridSizeY][gridSizeX];
+		for(int i=0; i<grid.length; i++){
+            for(int j=0; j<grid[i].length; j++){
+
+                if(grid[i][j].isStart){
+                    intGrid[i][j]= 2;
+                }else if(grid[i][j].isTarget){
+                    intGrid[i][j]=3;
+                }else if(grid[i][j].walkable){
+                    intGrid[i][j]=0;
+                }else {
+					intGrid[i][j]=1;
+				}
+            }
+        }
+
+		return intGrid;
+
+	}
+
+
+	public ArrayList<Node> NonWallNeighbours(Node node) {
+		ArrayList<Node> neighbours = new ArrayList<Node>();
+
+		for (int x = -2; x <= 2; x= x+2) {
+			for (int y = -2; y <= 2; y= y+2) {
+				if (x == 0 && y == 0 || !(x==0 || y==0))
+					continue;
+
+				int checkX = node.gridX + x;
+				int checkY = node.gridY + y;
+
+				if (checkX >= 0 && checkX < gridSizeX && checkY >= 0 && checkY < gridSizeY) {
+					neighbours.add(grid[checkY][checkX]);
+				}
+			}
+		}
+
+		return neighbours;
+	}
 }

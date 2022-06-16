@@ -15,7 +15,7 @@ public class MazeBot {
         Bot bot = new StraightLineBot(engine);
         
         // Vector2 bestMove = bot.findBestMove(engine.targetPosition);
-        List<Node> path = engine.pathFinder.path;
+        List<Node> path = engine.pathFinder.getStraightLinePath();
 
         for (int i = path.size()-1; i >= 0; i--) {
             Vector2 nextPos = engine.getCenterPositionFromGridCoords(path.get(i));

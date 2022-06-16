@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.mygdx.golf.engine.Engine;
 import com.mygdx.golf.engine.solvers.*;
+import com.mygdx.golf.screens.MapCreatorScreen;
 
 public class Boot extends Game {
 
@@ -29,10 +30,11 @@ public class Boot extends Game {
         //creates the engine with the selected solver 
         Engine engine = new Engine(new Euler(), false);
         //creates the GUI with the camera and engine
-        MapScreenMaze mapScreen = new MapScreenMaze(orthographicCamera, engine);
-        Gdx.input.setInputProcessor(mapScreen);
+        // MapScreenMaze mapScreen = new MapScreenMaze(orthographicCamera, engine);
+        MapCreatorScreen mapCreatorScreen = new MapCreatorScreen(orthographicCamera);
+        Gdx.input.setInputProcessor(mapCreatorScreen);
 
-        setScreen(mapScreen);
+        setScreen(mapCreatorScreen);
     }
 
     //simple getter methods

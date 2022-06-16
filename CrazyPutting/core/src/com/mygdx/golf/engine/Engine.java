@@ -15,6 +15,7 @@ import com.mygdx.golf.A_star.PathFinding;
 import com.mygdx.golf.engine.solvers.Euler;
 import com.mygdx.golf.engine.solvers.RungeKutta2;
 import com.mygdx.golf.engine.solvers.Solver;
+import com.mygdx.golf.maze_generator.RandomMazeGenerator;
 
 public class Engine {
     public final boolean USE_NEGATIVE_LAKES = false;
@@ -46,7 +47,7 @@ public class Engine {
     // game logic variables
     private int numberOfShots = 0;
     public boolean gameIsFinished;
-    private boolean ballIsStopped = true;
+    public boolean ballIsStopped = true;
     private Vector2 savedPos;
     public boolean inWater;
 
@@ -64,9 +65,6 @@ public class Engine {
         this.sandPitCoords = inputManager.getSandPitCoords();
         this.lakeCoords = inputManager.getLakeCoords();
         state = new State();
-        generateIntGrid();
-        pathFinder = new PathFinding(intGrid);
-        nodeGrid = pathFinder.grid;
         initGame();
 
         if (useInitialVelocity) {
@@ -103,9 +101,12 @@ public class Engine {
     // resets the game
     public void initGame() {
         if (USING_MAZE) {
+            generateIntGrid();
+        pathFinder = new PathFinding(intGrid);
+        nodeGrid = pathFinder.grid;
             state.setPosition(getCenterPositionFromGridCoords(nodeGrid.startNode));
             this.targetPosition = getCenterPositionFromGridCoords(nodeGrid.targetNode);
-
+           
         } else {
             this.targetPosition = inputManager.getTargetPos();
 
@@ -479,27 +480,8 @@ public class Engine {
     }
 
     public void generateIntGrid() {
-        intGrid = new int[10][10];
-        for (int y = 0; y < intGrid.length; y++) {
-            for (int x = 0; x < intGrid[0].length; x++) {
-                intGrid[y][x] = 0;
-            }
-        }
-        intGrid[4][3] = 2;
-        intGrid[6][6] = 3;
 
-        intGrid = new int[][] {
-                { 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0 },
-                { 0, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0 },
-                { 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0 },
-                { 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0 },
-                { 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0 },
-                { 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0 },
-                { 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0 },
-                { 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0 },
-                { 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, 0 },
-                { 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 },
-                { 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 },
-        };
+        intGrid = RandomMazeGenerator.returnFinalRandomMaze(30, 30, true);
+
     }
 }

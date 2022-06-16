@@ -49,6 +49,9 @@ public class MapScreenMaze extends ScreenAdapter implements InputProcessor {
     private Vector2 mouseShootEnd;
     private boolean isShooting;
 
+    private boolean botSolvingMaze = false;
+    private boolean botIsShooting = false;
+
     private int[][] intGrid = new int[][] {
             { 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0 },
             { 0, 0, 0, 1, 0, 0, 0, 3, 0, 0, 0 },
@@ -62,8 +65,6 @@ public class MapScreenMaze extends ScreenAdapter implements InputProcessor {
             { 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
             { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
     };
-    private NodeGrid nodeGrid;
-    PathFinding pathFinder;
 
     float gridWidth;
     float gridHeight;
@@ -88,8 +89,6 @@ public class MapScreenMaze extends ScreenAdapter implements InputProcessor {
 
         // generateIntGrid();
 
-        pathFinder = engine.pathFinder;
-        nodeGrid = engine.nodeGrid;
         updateGridValues();
         dragDelta.x = gridWidth / 2;
         dragDelta.y = gridHeight / 2;
@@ -110,6 +109,7 @@ public class MapScreenMaze extends ScreenAdapter implements InputProcessor {
 
         // if game is finished than only show end screen
         if (engine.gameIsFinished) {
+            botSolvingMaze= false;
             renderEndScreen();
             return;
         }
@@ -150,13 +150,14 @@ public class MapScreenMaze extends ScreenAdapter implements InputProcessor {
 
         batch.end();
         renderShootingLine(shootingLine);
+        mazeBotShot();
         engine.update();
     }
 
     public void updateGridValues() {
 
-        gridWidth = nodeGrid.grid[0].length * getCellSizeInPixels();
-        gridHeight = nodeGrid.grid.length * getCellSizeInPixels();
+        gridWidth = engine.nodeGrid.grid[0].length * getCellSizeInPixels();
+        gridHeight = engine.nodeGrid.grid.length * getCellSizeInPixels();
         gridOriginX = Boot.INSTANCE.getScreenWidth() / 2 - dragDelta.x;
         gridOriginY = Boot.INSTANCE.getScreenHeight() / 2 - dragDelta.y;
         gridTopY = Boot.INSTANCE.getScreenHeight() / 2 + gridHeight - dragDelta.y;
@@ -179,17 +180,18 @@ public class MapScreenMaze extends ScreenAdapter implements InputProcessor {
     }
 
     public void drawGrid() {
-        Node[][] grid = nodeGrid.grid;
+        Node[][] grid = engine.nodeGrid.grid;
 
-        for (int i = 0; i <= grid[0].length; i++) {
-            shapeRenderer.rectLine(gridOriginX + i * getCellSizeInPixels(), gridOriginY,
-                    gridOriginX + i * getCellSizeInPixels(),
-                    gridOriginY + gridHeight, lineWidth);
-        }
-        for (int i = 0; i <= grid.length; i++) {
-            shapeRenderer.rectLine(gridOriginX, gridOriginY + i * getCellSizeInPixels(), gridOriginX + gridWidth,
-                    gridOriginY + i * getCellSizeInPixels(), lineWidth);
-        }
+        // for (int i = 0; i <= grid[0].length; i++) {
+        // shapeRenderer.rectLine(gridOriginX + i * getCellSizeInPixels(), gridOriginY,
+        // gridOriginX + i * getCellSizeInPixels(),
+        // gridOriginY + gridHeight, lineWidth);
+        // }
+        // for (int i = 0; i <= grid.length; i++) {
+        // shapeRenderer.rectLine(gridOriginX, gridOriginY + i * getCellSizeInPixels(),
+        // gridOriginX + gridWidth,
+        // gridOriginY + i * getCellSizeInPixels(), lineWidth);
+        // }
         shapeRenderer.setColor(0, 0, 0, 1);
 
         // shapeRenderer.rect(originX, originY, size -lineWidth , size-lineWidth );
@@ -333,12 +335,23 @@ public class MapScreenMaze extends ScreenAdapter implements InputProcessor {
         return engine.gridCellSizeMetres / metreToPixelCoeff;
     }
 
+    private void mazeBotShot() {
+
+        if (engine.ballIsStopped && botSolvingMaze) {
+            MazeBot mazeBot = new MazeBot(engine);
+            Vector2 bestMove = mazeBot.solveMaze();
+            engine.newShot(bestMove);
+        }
+
+    }
+
     @Override
     public boolean keyDown(int keycode) {
 
         return false;
     }
-    int counter = 0;
+
+
     @Override
     public boolean keyTyped(char character) {
         // restart game when press enter
@@ -346,30 +359,10 @@ public class MapScreenMaze extends ScreenAdapter implements InputProcessor {
             engine.initGame();
         }
         if (character == 'b') {
-            MazeBot mazeBot = new MazeBot(engine);
-            Vector2 bestMove = mazeBot.solveMaze();
-            // Bot bot = new StraightLineBot(engine);
-            // // Vector2 bestMove = bot.findBestMove(engine.targetPosition);
-            // List<Node> path = engine.pathFinder.getStraightLinePath();
-
-            // // for (int i = 0; i < path.size(); i++) {
-            // Vector2 nextPos = engine.getCenterPositionFromGridCoords(path.get(counter));
-
-            // Vector2 bestMove = bot.findBestMove(nextPos, false);
-            engine.newShot(bestMove);
-            counter++;
-            // try {
-            //     Thread.sleep(4000);
-            // } catch (InterruptedException ex) {
-            //     Thread.currentThread().interrupt();
-            // }
-            // System.out.println("Next move");
-            // nextPos = engine.getCenterPositionFromGridCoords(path.get(1));
-
-            // bestMove = bot.findBestMove(nextPos, false);
-           
+            // MazeBot mazeBot = new MazeBot(engine);
+            // Vector2 bestMove = mazeBot.solveMaze();
             // engine.newShot(bestMove);
-            // }
+          botSolvingMaze= true;
 
         }
         return false;

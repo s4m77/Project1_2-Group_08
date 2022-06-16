@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.ScreenAdapter;
@@ -38,26 +40,7 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
     private Vector2 oldDragDelta;
     private boolean isDragging;
 
-    /*private int[][] intGrid = new int[][] {
-            { 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0 },
-            { 0, 0, 0, 1, 0, 0, 0, 3, 0, 0, 0 },
-            { 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 },
-            { 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 },
-            { 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0 },
-            { 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0 },
-            { 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0 },
-            { 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0 },
-            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-            { 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    };
-    */
-   /*  private int[][] intGrid = new int[][] {
-        { 1, 0, 3, 1, 0, 0 },
-        { 0, 0, 0, 1, 0, 0 },
-        { 0, 0, 0, 1, 0, 0 },
-        { 0, 2, 0, 1, 0, 0 }
-};*/
+ 
 
 
     private NodeGrid nodeGrid;
@@ -78,16 +61,16 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
 
     // Initializes everything
     public MapScreen(OrthographicCamera camera) {
-        generateIntGrid();
         this.camera = camera;
         this.camera.position
-                .set(new Vector3(Boot.INSTANCE.getScreenWidth() / 2, Boot.INSTANCE.getScreenHeight() / 2, 0));
+        .set(new Vector3(Boot.INSTANCE.getScreenWidth() / 2, Boot.INSTANCE.getScreenHeight() / 2, 0));
         this.shapeRenderer = new ShapeRenderer();
-
+        
         this.batch = new SpriteBatch();
         font = new BitmapFont();
         font.setColor(Color.BLACK);
-
+        
+        generateIntGrid(20,20);
         pathFinder = new PathFinding(intGrid);
         nodeGrid = pathFinder.grid;
         this.dragDelta = new Vector2(0, 0);
@@ -95,14 +78,13 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
        
     }
 
-    public void generateIntGrid() {
-        intGrid = new int[20][40];
+    public void generateIntGrid(int xLength, int yLength) {
+        intGrid = new int[yLength][xLength];
         for (int y = 0; y < intGrid.length; y++) {
             for (int x = 0; x < intGrid[0].length; x++) {
                 intGrid[y][x] = 0;
             }
         }
-        intGrid[0][0]=1;
     }
 
     // method for whole grid
@@ -195,14 +177,15 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
         // drawPath(pathFinder.path);
         shapeRenderer.setColor(0, 1, 1, 1);
 
-        drawPath(pathFinder.getStraightLinePath());
+        // drawPath(pathFinder.getStraightLinePath());
         
         shapeRenderer.end();
         pathFinder.findPath();
 
         batch.begin();
-        String str = "Click mode : " + clickMode + ". press T for target, W for creating walls, D for deleting Walls, and S for start";
-        font.draw(batch, str, 10, 20);
+        String str1 = "Click mode : " + clickMode + "\nT : Target\nI : Starting node \nW : Creating walls \nD : Deleting Walls\n\n";
+        String str2 = "G : Grid size \nS : Save Map \nO : Open Map \n";
+        font.draw(batch, str1 + str2, 10, Boot.INSTANCE.getScreenHeight() - 20);
 
         batch.end();
     }
@@ -339,15 +322,22 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
 
         return nodeGrid;
     }
+    //gridSize has to be a string with two Integers seperated by the an x
+    public void changeGridSize(String gridSize) {
+        String[] strs = gridSize.split("x");
+        if(strs.length != 2) {
+            System.out.println("Wrong syntax"); 
+            return;
+        }
 
-    /*public void renderEndScreen() {
-        batch.begin();
-        font.getData().setScale(1.5f, 1.5f);
-        String str = "You made it in ";
-        font.draw(batch, str, Boot.INSTANCE.getScreenWidth() / 2 - 214, Boot.INSTANCE.getScreenHeight() / 2+30);
-        font.draw(batch, "Press enter to restart", Boot.INSTANCE.getScreenWidth() / 2 - 90, Boot.INSTANCE.getScreenHeight() / 2 );
-        batch.end();
-    }*/
+        int x = Integer.parseInt(strs[0]); 
+        int y = Integer.parseInt(strs[1]);
+        
+        generateIntGrid(x,y);
+        pathFinder = new PathFinding(intGrid);
+        nodeGrid = pathFinder.grid;
+    }
+  
 
     @Override
     public boolean keyDown(int keycode) {
@@ -366,16 +356,44 @@ public class MapScreen extends ScreenAdapter implements InputProcessor {
         if (character == 'd') {
             clickMode = "delete wall";
         }
-        if (character == 's') {
+        if (character == 'i') {
             clickMode = "start";
         }
         if (character == 'p') {
             pathFinder.getStraightLinePath();
         }
+        if(character == 'g') {
+            String gridSize = JOptionPane.showInputDialog("What grid size ?", "20x20");
+            changeGridSize(gridSize);
+        }
+        if(character == 's') {
+            String mapName = JOptionPane.showInputDialog("Choose a map name");
+            JsonFileManager.writeMapToJson(nodeGrid.toIntGrid(), mapName);
+        }
+        if(character == 'o') {
+            System.out.println("hello");
+            String[] mapNames = JsonFileManager.getAllMapNames();
+            
+            String mapName = askUser("Open Saved Map", "Choose map name", mapNames);
+            intGrid = JsonFileManager.readMapFromJson(mapName) ;
+        pathFinder = new PathFinding(intGrid);
+        nodeGrid = pathFinder.grid;
+
+        }
 
         return false;
     }
-
+    String askUser(String title, String question, String[] choices) {
+        String s = (String) JOptionPane.showInputDialog(
+                null,
+                question,
+                title,
+                JOptionPane.PLAIN_MESSAGE,
+                null,
+                choices,
+                choices[0]);
+        return s;
+    }
     @Override
     public boolean keyUp(int keycode) {
         // TODO Auto-generated method stub

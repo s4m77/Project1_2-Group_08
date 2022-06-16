@@ -16,6 +16,27 @@ public class NodeGrid {
 	Node startNode;
 	Node targetNode;
 
+	public int[][] toIntGrid() {
+		int[][] intGrid = new int[gridSizeY][gridSizeX];
+		for(int i=0; i<grid.length; i++){
+            for(int j=0; j<grid[i].length; j++){
+
+                if(grid[i][j].isStart){
+                    intGrid[i][j]= 2;
+                }else if(grid[i][j].isTarget){
+                    intGrid[i][j]=3;
+                }else if(grid[i][j].walkable){
+                    intGrid[i][j]=0;
+                }else {
+					intGrid[i][j]=1;
+				}
+            }
+        }
+
+		return intGrid;
+
+	}
+
     public void setNodeToTarget(int x, int y) {
 		Node n = grid[y][x];
 		if(n.isStart || n.isTarget){
