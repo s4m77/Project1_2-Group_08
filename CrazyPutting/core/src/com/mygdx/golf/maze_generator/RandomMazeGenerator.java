@@ -10,13 +10,13 @@ import com.mygdx.golf.A_star.NodeGrid;
 public class RandomMazeGenerator {
 
     public static int[][] createArrayGrid(int gridSizeX, int gridSizeY){
-        int[][] randomArray= new int[gridSizeX][gridSizeY];
+        int[][] randomArray= new int[gridSizeY][gridSizeX];
         for(int i=0; i<gridSizeX; i++){
             for(int j= 0; j<gridSizeY; j++){
                 if(j%2 !=0 || i%2 !=0){
-                    randomArray[i][j]= 1;
+                    randomArray[j][i]= 1;
                 }else{
-                    randomArray[i][j]= 0;
+                    randomArray[j][i]= 0;
                 }
             }
         }
@@ -27,7 +27,7 @@ public class RandomMazeGenerator {
         ArrayList<Node> toVisit= new ArrayList<>();
 
         for(int i=0; i<grid.length; i++){
-            for(int j= 0; j<grid.length; j++){
+            for(int j= 0; j<grid[0].length; j++){
                 if(grid[i][j].walkable== true){
                     toVisit.add(grid[i][j]);
                 }
@@ -63,19 +63,21 @@ public class RandomMazeGenerator {
 
     public static void addRandomTargetandStart(int [][] randomArray, int gridSizeX, int gridSizeY){
         int xS= (int)(Math.random()*gridSizeX);
-        int yS= (int)(Math.random()*gridSizeX);
+        int yS= (int)(Math.random()*gridSizeY);
         int xT=(int)(Math.random()*gridSizeX);
-        int yT=(int)(Math.random()*gridSizeX);
+        int yT=(int)(Math.random()*gridSizeY);
 
-        while((xS == xT && yS== yT) || (randomArray[xS][yS] == 1 || randomArray[xT][yT] ==1)){
+        while((xS == xT && yS== yT) || (randomArray[yS][xS] == 1 || randomArray[yT][xT] ==1)){
             xS= (int)(Math.random()*gridSizeX);
-            yS= (int)(Math.random()*gridSizeX);
+            yS= (int)(Math.random()*gridSizeY);
             xT=(int)(Math.random()*gridSizeX);
-            yT=(int)(Math.random()*gridSizeX);
+            yT=(int)(Math.random()*gridSizeY);
         }
 
-        randomArray[xS][yS]= 2;
-        randomArray[xT][yT]=3;
+        // randomArray[xS][yS]= 2;
+        // randomArray[xT][yT]=3;
+        randomArray[yS][xS]= 2;
+        randomArray[yT][xT]=3;
     }
 
     public static int[][] returnFinalRandomMaze(int gridSizeX, int gridSizeY, boolean moreHoles){

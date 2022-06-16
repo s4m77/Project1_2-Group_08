@@ -5,7 +5,7 @@ import java.util.List;
 
 public class NodeGrid {
     public Node[][] grid;
-	int gridSizeX, gridSizeY;
+	public int gridSizeX, gridSizeY;
 	public List<Node> path;
 	public NodeGrid(int[][] intGrid) {
 		 gridSizeX = intGrid[0].length;
