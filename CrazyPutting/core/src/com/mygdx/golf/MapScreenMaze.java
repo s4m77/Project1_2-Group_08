@@ -34,7 +34,7 @@ public class MapScreenMaze extends ScreenAdapter implements InputProcessor {
     private BitmapFont font;
 
     // coefficient from metres to pixels
-    private float metreToPixelCoeff = 0.01f;
+    private float metreToPixelCoeff = 0.05f;
 
     private Engine engine;
 
@@ -50,7 +50,7 @@ public class MapScreenMaze extends ScreenAdapter implements InputProcessor {
     private boolean isShooting;
 
     private boolean botSolvingMaze = false;
-    private boolean botIsShooting = false;
+    private boolean showPath = false;
 
     private int[][] intGrid = new int[][] {
             { 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0 },
@@ -120,7 +120,10 @@ public class MapScreenMaze extends ScreenAdapter implements InputProcessor {
         // shapeRenderer.rectLine(gridOriginX, gridOriginY, gridOriginX +500,
         // gridOriginY + gridHeight, lineWidth);
         drawGrid();
-        drawPath(engine.pathFinder.path);
+        if(showPath) {
+
+            drawPath(engine.pathFinder.path);
+        }
         // drawPath(engine.pathFinder.getStraightLinePath());
         // renderMap();
 
@@ -181,35 +184,36 @@ public class MapScreenMaze extends ScreenAdapter implements InputProcessor {
 
     public void drawGrid() {
         Node[][] grid = engine.nodeGrid.grid;
-
-        // for (int i = 0; i <= grid[0].length; i++) {
-        // shapeRenderer.rectLine(gridOriginX + i * getCellSizeInPixels(), gridOriginY,
-        // gridOriginX + i * getCellSizeInPixels(),
-        // gridOriginY + gridHeight, lineWidth);
-        // }
-        // for (int i = 0; i <= grid.length; i++) {
-        // shapeRenderer.rectLine(gridOriginX, gridOriginY + i * getCellSizeInPixels(),
-        // gridOriginX + gridWidth,
-        // gridOriginY + i * getCellSizeInPixels(), lineWidth);
-        // }
         shapeRenderer.setColor(0, 0, 0, 1);
+        shapeRenderer.rectLine(gridOriginX , gridOriginY,
+        gridOriginX ,
+        gridOriginY + gridHeight, lineWidth);
 
-        // shapeRenderer.rect(originX, originY, size -lineWidth , size-lineWidth );
+        shapeRenderer.rectLine(gridOriginX  , gridOriginY,
+        gridOriginX + gridWidth,
+        gridOriginY , lineWidth);
+        shapeRenderer.rectLine(gridOriginX + gridWidth, gridOriginY,
+        gridOriginX + gridWidth,
+        gridOriginY+ gridHeight , lineWidth);
+        shapeRenderer.rectLine(gridOriginX  , gridOriginY+ gridHeight,
+        gridOriginX + gridWidth,
+        gridOriginY+ gridHeight , lineWidth);
+        
         for (int y = 0; y < grid.length; y++) {
             for (int x = 0; x < grid[0].length; x++) {
                 if (!grid[y][x].walkable) {
                     shapeRenderer.setColor(0, 0, 0, 1);
-                    shapeRenderer.rect(gridOriginX + x * getCellSizeInPixels() + 1,
-                            gridTopY - (y + 1) * getCellSizeInPixels() + 1,
-                            getCellSizeInPixels() - lineWidth,
-                            getCellSizeInPixels() - lineWidth);
+                    shapeRenderer.rect(gridOriginX + x * getCellSizeInPixels() ,
+                            gridTopY - (y + 1) * getCellSizeInPixels(),
+                            getCellSizeInPixels() ,
+                            getCellSizeInPixels() );
                 }
                 if (grid[y][x].isStart) {
                     shapeRenderer.setColor(0, 1, 0, 1);
-                    shapeRenderer.rect(gridOriginX + x * getCellSizeInPixels() + 1,
-                            gridTopY - (y + 1) * getCellSizeInPixels() + 1,
-                            getCellSizeInPixels() - lineWidth,
-                            getCellSizeInPixels() - lineWidth);
+                    shapeRenderer.rect(gridOriginX + x * getCellSizeInPixels() ,
+                            gridTopY - (y + 1) * getCellSizeInPixels(),
+                            getCellSizeInPixels() ,
+                            getCellSizeInPixels());
                 }
                 if (grid[y][x].isTarget) {
                     shapeRenderer.setColor(1, 0, 0, 1);
@@ -364,6 +368,12 @@ public class MapScreenMaze extends ScreenAdapter implements InputProcessor {
             // engine.newShot(bestMove);
           botSolvingMaze= true;
 
+        }
+        if(character == 'p') {
+            showPath = !showPath;
+        }
+        if (character == 'm') {
+           Boot.INSTANCE.goToMazeCreatorScreen();
         }
         return false;
     }

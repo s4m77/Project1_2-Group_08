@@ -95,8 +95,8 @@ public class JsonFileManager {
     public static void main(String[] args) {
         // int[][] arr1 = new int[][] { { 0, 0, 1 }, { 0, 0, 1 } };
         // writeMapToJson(arr1, "Test");
-        int[][] read = readMapFromJson("Test");
-        System.out.println(Arrays.deepToString(read));
+        // int[][] read = readMapFromJson("Test");
+        // System.out.println(Arrays.deepToString(read));
 
         String[] mapNames = getAllMapNames();
         // String[] array = (String[]) mapNames.toArray(new String[mapNames.size()]);

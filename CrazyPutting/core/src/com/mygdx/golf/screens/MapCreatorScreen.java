@@ -344,6 +344,10 @@ public class MapCreatorScreen extends ScreenAdapter implements InputProcessor {
 
     @Override
     public boolean keyTyped(char character) {
+        System.out.println(character);
+        if (character == '\n' || character == '\r') {
+            Boot.INSTANCE.goToGameScreenWithMaze(nodeGrid.toIntGrid());
+        }
         if (character == 't') {
             clickMode = "target";
         }

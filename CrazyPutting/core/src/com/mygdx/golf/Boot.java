@@ -27,14 +27,26 @@ public class Boot extends Game {
         this.orthographicCamera = new OrthographicCamera();
         this.orthographicCamera.setToOrtho(false, screenWidth,screenHeight);
 
-        //creates the engine with the selected solver 
-        Engine engine = new Engine(new Euler(), true);
-        //creates the GUI with the camera and engine
-        // MapScreenMaze mapScreen = new MapScreenMaze(orthographicCamera, engine);
-        MapCreatorScreen mapCreatorScreen = new MapCreatorScreen(orthographicCamera);
-        Gdx.input.setInputProcessor(mapCreatorScreen);
+        goToMazeCreatorScreen();
 
+       
+    }
+
+    public void goToGameScreenWithMaze(int[][] intGrid) {
+        //creates the engine with the selected solver 
+        Engine engine = new Engine(new Euler(), false);
+        engine.setIntGrid(intGrid);
+        //creates the GUI with the camera and engine
+        MapScreenMaze mapScreen = new MapScreenMaze(orthographicCamera, engine);
+        setScreen(mapScreen);
+                Gdx.input.setInputProcessor(mapScreen);
+
+    }
+
+    public void goToMazeCreatorScreen() {
+        MapCreatorScreen mapCreatorScreen = new MapCreatorScreen(orthographicCamera);
         setScreen(mapCreatorScreen);
+        Gdx.input.setInputProcessor(mapCreatorScreen);
     }
 
     //simple getter methods

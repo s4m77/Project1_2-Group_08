@@ -35,7 +35,7 @@ public class Euler implements Solver {
             partials.y)) {
                 //if the grass static friction is stronger than the force of gravity with the slope
                 // engine.stopBall();
-                //return new Vector2(0,0);
+                return new Vector2(0,0);
             }else {
 
                 acceleration = engine.calcSlidingAcceleration(position, velocity);

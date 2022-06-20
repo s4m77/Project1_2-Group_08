@@ -12,11 +12,9 @@ import com.mygdx.golf.State;
 import com.mygdx.golf.A_star.Node;
 import com.mygdx.golf.A_star.NodeGrid;
 import com.mygdx.golf.A_star.PathFinding;
-import com.mygdx.golf.engine.solvers.AB3;
 import com.mygdx.golf.engine.solvers.Euler;
 import com.mygdx.golf.engine.solvers.RungeKutta2;
 import com.mygdx.golf.engine.solvers.Solver;
-import com.mygdx.golf.maze_generator.RandomMazeGenerator;
 
 public class Engine {
     public final boolean USE_NEGATIVE_LAKES = false;
@@ -28,13 +26,11 @@ public class Engine {
     public Vector2 targetPosition;
     private float targetRadius;
     public final float BALL_RADIUS = 0.1f;
-
-    private final float dt = 0.0001f;
-
+    private final float dt = 0.05f;
     public double[] sandPitCoords;
     public double[] lakeCoords;
 
-    public final boolean USING_MAZE = false;
+    public final boolean USING_MAZE = true;
     public float gridCellSizeMetres = 0.8f;
     private int[][] intGrid;
     public NodeGrid nodeGrid;
@@ -68,6 +64,9 @@ public class Engine {
         this.sandPitCoords = inputManager.getSandPitCoords();
         this.lakeCoords = inputManager.getLakeCoords();
         state = new State();
+        generateIntGrid();
+        pathFinder = new PathFinding(intGrid);
+        nodeGrid = pathFinder.grid;
         initGame();
 
         if (useInitialVelocity) {
@@ -76,6 +75,13 @@ public class Engine {
 
         }
 
+    }
+
+    public void setIntGrid(int[][] _intGrid) {
+        this.intGrid = _intGrid;
+        pathFinder = new PathFinding(intGrid);
+        nodeGrid = pathFinder.grid;
+        initGame();
     }
 
     public static void main(String[] args) {
@@ -104,12 +110,9 @@ public class Engine {
     // resets the game
     public void initGame() {
         if (USING_MAZE) {
-            generateIntGrid();
-        pathFinder = new PathFinding(intGrid);
-        nodeGrid = pathFinder.grid;
             state.setPosition(getCenterPositionFromGridCoords(nodeGrid.startNode));
             this.targetPosition = getCenterPositionFromGridCoords(nodeGrid.targetNode);
-           
+
         } else {
             this.targetPosition = inputManager.getTargetPos();
 
@@ -142,6 +145,7 @@ public class Engine {
             if (inWater(state) || (USING_MAZE && isCollidingWithWalls(state))) {
                 System.out.println("fail");
                 stopBall();
+                System.out.println(savedPos);
                 state.setPosition(savedPos); // put ball back to its previous position
                 inWater = true;
             }
@@ -483,8 +487,27 @@ public class Engine {
     }
 
     public void generateIntGrid() {
+        intGrid = new int[10][10];
+        for (int y = 0; y < intGrid.length; y++) {
+            for (int x = 0; x < intGrid[0].length; x++) {
+                intGrid[y][x] = 0;
+            }
+        }
+        intGrid[4][3] = 2;
+        intGrid[6][6] = 3;
 
-        intGrid = RandomMazeGenerator.returnFinalRandomMaze(30, 30, true);
-
+        intGrid = new int[][] {
+                { 1, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0 },
+                { 0, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0 },
+                { 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0 },
+                { 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0 },
+                { 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0 },
+                { 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0 },
+                { 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0 },
+                { 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0 },
+                { 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, 0 },
+                { 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 },
+                { 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 },
+        };
     }
 }
